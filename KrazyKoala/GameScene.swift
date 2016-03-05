@@ -254,8 +254,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMoveToView(view: SKView) {
-        view.showsFPS = true;
-        
         NSNotificationCenter.defaultCenter().addObserver(
             self,
             selector: "fromApplicationDidBecomeActive",
