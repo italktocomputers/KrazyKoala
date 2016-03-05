@@ -1,10 +1,26 @@
-//
-//  LeaderboardMenuScene.swift
-//  KrazyKoala
-//
-//  Created by Andrew Schools on 1/4/15.
-//  Copyright (c) 2015 Andrew Schools. All rights reserved.
-//
+/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Andrew Schools
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 import SpriteKit
 import iAd
@@ -29,13 +45,13 @@ class LeaderboardMenuScene: SKScene {
     }
     
     override func didMoveToView(view: SKView) {
-        if (self.controller!.iAdError == true) {
-            if (self.controller!.isLoadingiAd == false) {
-                // there was an error loading iAd so let's try again
+        if self.controller!.iAdError == true {
+            if self.controller!.isLoadingiAd == false {
+                // There was an error loading iAd so let's try again
                 self.controller!.loadAds()
             }
         } else {
-            // we already have loaded iAd so let's just show it
+            // We already have loaded iAd so let's just show it
             self.controller!.adBannerView?.hidden = false
         }
         
@@ -55,7 +71,7 @@ class LeaderboardMenuScene: SKScene {
         background.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
         self.addChild(background)
         
-        var panel = SKSpriteNode(imageNamed:"Panel")
+        let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
         panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
@@ -78,7 +94,7 @@ class LeaderboardMenuScene: SKScene {
     }
     
     func addBackButton() {
-        var node = SKSpriteNode(imageNamed:"Backbtn")
+        let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
         node.position = CGPointMake(175, CGRectGetMidY(self.frame))
@@ -95,7 +111,7 @@ class LeaderboardMenuScene: SKScene {
         button.name = "Easy"
         self.addChild(button)
         
-        var node2 = SKSpriteNode(imageNamed:"LeaderboardGreenbtn")
+        let node2 = SKSpriteNode(imageNamed:"LeaderboardGreenbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
         node2.position = CGPointMake(CGRectGetMidX(button.frame)+75, CGRectGetMidY(button.frame)+25)
@@ -114,7 +130,7 @@ class LeaderboardMenuScene: SKScene {
         button.name = "Hard"
         self.addChild(button)
         
-        var node2 = SKSpriteNode(imageNamed:"Leaderboardbtn")
+        let node2 = SKSpriteNode(imageNamed:"Leaderboardbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
         node2.position = CGPointMake(CGRectGetMidX(button.frame)+75, CGRectGetMidY(button.frame)+25)
@@ -133,7 +149,7 @@ class LeaderboardMenuScene: SKScene {
         button.name = "Krazy"
         self.addChild(button)
         
-        var node2 = SKSpriteNode(imageNamed:"LeaderboardRedbtn")
+        let node2 = SKSpriteNode(imageNamed:"LeaderboardRedbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
         node2.position = CGPointMake(CGRectGetMidX(button.frame)+75, CGRectGetMidY(button.frame)+25)
@@ -144,21 +160,18 @@ class LeaderboardMenuScene: SKScene {
         self.addChild(node2)
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        var difficulty = ""
-        
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             let node = self.nodeAtPoint(location)
             var nodeName = ""
             
-            if (node.name != nil) {
+            if node.name != nil {
                 nodeName = node.name!
             }
             
             var difficulty = ""
             
-            //if fire button touched, bring the rain
             if nodeName == "Hard" {
                 difficulty = "Hard"
             } else if nodeName == "Krazy" {
@@ -167,13 +180,13 @@ class LeaderboardMenuScene: SKScene {
                 difficulty = "Easy"
             }
             
-            // if difficulty is empty, they did not click a button
-            if (difficulty != "") {
+            // If difficulty is empty, they did not click a button
+            if difficulty != "" {
                 let leaderboardScene = LeaderboardScene(size: self.size, gameViewController: self.controller!, difficulty: difficulty)
                 leaderboardScene.scaleMode = .AspectFill
                 self.view?.presentScene(leaderboardScene)
-            } else if (nodeName == "Back") {
-                // go back to start menu
+            } else if nodeName == "Back" {
+                // Go back to start menu
                 let startScene = StartScene(size: self.size, gameViewController: self.controller!)
                 startScene.scaleMode = .AspectFill
                 self.view?.presentScene(startScene)

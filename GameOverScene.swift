@@ -1,10 +1,26 @@
-//
-//  GameOverScene.swift
-//  KrazyKoala
-//
-//  Created by Andrew Schools on 1/4/15.
-//  Copyright (c) 2015 Andrew Schools. All rights reserved.
-//
+/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Andrew Schools
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 import SpriteKit
 import iAd
@@ -79,19 +95,19 @@ class GameOverScene: SKScene {
         let clearedLabel = self.helpers.createLabel(String(format: "%i", self.fliesKilled+self.antsKilled), fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame)+125, CGRectGetMidY(antsClearedLabel.frame)-67), color: SKColor.blackColor(), name: "screenItem")
         self.addChild(clearedLabel)
         
-        var antnodeBlack = SKSpriteNode(imageNamed:"ant_stand_black")
+        let antnodeBlack = SKSpriteNode(imageNamed:"ant_stand_black")
         antnodeBlack.position = CGPointMake(CGRectGetMidX(antsClearedLabel.frame), CGRectGetMidY(antsClearedLabel.frame)-60)
         antnodeBlack.name = "screenItem"
         antnodeBlack.zPosition = 2
         self.addChild(antnodeBlack)
         
-        var flynode = SKSpriteNode(imageNamed:"fly_1")
+        let flynode = SKSpriteNode(imageNamed:"fly_1")
         flynode.position = CGPointMake(CGRectGetMidX(fliesClearedLabel.frame), CGRectGetMidY(fliesClearedLabel.frame)-60)
         flynode.name = "screenItem"
         flynode.zPosition = 2
         self.addChild(flynode)
         
-        var clearnode = SKSpriteNode(imageNamed:"poof1_white")
+        let clearnode = SKSpriteNode(imageNamed:"poof1_white")
         clearnode.position = CGPointMake(CGRectGetMidX(clearedLabel.frame), CGRectGetMidY(fliesClearedLabel.frame)-60)
         clearnode.name = "screenItem"
         clearnode.zPosition = 2
@@ -208,13 +224,13 @@ class GameOverScene: SKScene {
     }
 
     override func didMoveToView(view: SKView) {
-        if (self.controller.iAdError == true) {
-            if (self.controller.isLoadingiAd == false) {
-                // there was an error loading iAd so let's try again
+        if self.controller.iAdError == true {
+            if self.controller.isLoadingiAd == false {
+                // There was an error loading iAd so let's try again
                 self.controller.loadAds()
             }
         } else {
-            // we already have loaded iAd so let's just show it
+            // We already have loaded iAd so let's just show it
             self.controller.adBannerView?.hidden = false
         }
         
@@ -234,42 +250,42 @@ class GameOverScene: SKScene {
         self.highclearStreak = highClearStreak
         self.highLevel = highLevel
         
-        // save current stats so we can show them how their last
+        // Save current stats so we can show them how their last
         // game was when we come back to this scene
         self.helpers.saveLastScore(self.currentScore, difficulty: self.difficulty)
         self.helpers.saveLastClearStreak(self.currentclearStreak, difficulty: self.difficulty)
         self.helpers.saveLastLevel(self.currentLevel, difficulty: self.difficulty)
         
-        if (self.currentScore > highScore) {
-            // save new high score
+        if self.currentScore > highScore {
+            // Save new high score
             self.helpers.saveHighScore(self.currentScore, difficulty: self.difficulty)
             self.newHighScore = true
         }
         
-        if (self.helpers.getGameCenterSetting() == true) {
-            // save score to game center
+        if self.helpers.getGameCenterSetting() == true {
+            // Save score to game center
             self.gameCenterController.saveScore("Score",  score: self.currentScore, difficulty: self.difficulty)
         }
         
-        if (self.currentclearStreak > highclearStreak) {
-            // save a new high kill streak
+        if self.currentclearStreak > highclearStreak {
+            // Save a new high kill streak
             self.helpers.saveHighClearStreak(self.currentclearStreak, difficulty: self.difficulty)
             self.newClearStreak = true
         }
         
-        if (self.helpers.getGameCenterSetting() == true) {
-            // save score to game center
+        if self.helpers.getGameCenterSetting() == true {
+            // Save score to game center
             self.gameCenterController.saveScore("ClearStreak",  score: self.currentclearStreak, difficulty: self.difficulty)
         }
         
-        if (self.currentLevel > highLevel) {
-            // save new high difficulty adjustment
+        if self.currentLevel > highLevel {
+            // Save new high difficulty adjustment
             self.helpers.saveHighLevel(self.currentLevel, difficulty: self.difficulty)
             self.newHighLevel = true
         }
         
-        if (self.helpers.getGameCenterSetting() == true) {
-            // save difficulty adjustment to game center
+        if self.helpers.getGameCenterSetting() == true {
+            // Save difficulty adjustment to game center
             self.gameCenterController.saveScore("Level",  score: self.currentLevel, difficulty: self.difficulty)
         }
         
@@ -310,16 +326,16 @@ class GameOverScene: SKScene {
         self.panel.zPosition = 1
         self.addChild(self.panel)
         
-        var node = SKSpriteNode(imageNamed:"Forwardbtn")
+        let node = SKSpriteNode(imageNamed:"Forwardbtn")
         node.xScale = 1.5
         node.yScale = 1.5
         node.position = CGPointMake(self.frame.width-200, CGRectGetMidY(self.frame))
-        node.zPosition = 1
+        node.zPosition = 2
         node.name = "Forward"
         self.addChild(node)
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         var proceed = false
         var name = ""
         
@@ -327,7 +343,7 @@ class GameOverScene: SKScene {
             let location = touch.locationInNode(self)
             let node = self.nodeAtPoint(location)
             
-            if (node.name != nil) {
+            if node.name != nil {
                 name = node.name!
                 
                 if node.name == "Forward" {
@@ -336,35 +352,26 @@ class GameOverScene: SKScene {
             }
         }
         
-        // if proceed is false, they clicked an ad
-        if (proceed == true) {
-            if (self.newHighScore == true && self.newHighScoreShown == false) {
-                // new high score
+        // If proceed is false, they clicked an ad
+        if proceed == true {
+            if self.newHighScore == true && self.newHighScoreShown == false {
+                // New high score
                 self.showNewHighScore()
-            } else if (self.newClearStreak == true && self.newClearStreakShown == false) {
-                // new clear streak
+            } else if self.newClearStreak == true && self.newClearStreakShown == false {
+                // New clear streak
                 self.showNewClearStreak()
-            //} else if (self.newHighLevel == true && self.newHighLevelShown == false) {
-                // new high level
-                //self.showNewHighLevel()
             } else {
-                // send them back to the start menu
+                // Send them back to the start menu
                 let startScene = StartScene(size: self.size, gameViewController: self.controller)
                 startScene.scaleMode = .AspectFill
                 self.view?.presentScene(startScene)
             }
-        } else if (name == "Facebook_score") {
-            let facebookhelpers = FacebookHelpers()
-            facebookhelpers.sendPostWithScore(Int32(self.currentScore), clearStreak: Int32(self.currentclearStreak), level: Int32(self.currentLevel), type: "score", difficulty: self.difficulty)
-        } else if (name == "Facebook_clearStreak") {
-            let facebookhelpers = FacebookHelpers()
-            facebookhelpers.sendPostWithScore(Int32(self.currentScore), clearStreak: Int32(self.currentclearStreak), level: Int32(self.currentLevel), type: "clearStreak", difficulty: self.difficulty)
-        } else if (name == "Facebook_level") {
-            let facebookhelpers = FacebookHelpers()
-            facebookhelpers.sendPostWithScore(Int32(self.currentLevel), clearStreak: Int32(self.currentclearStreak), level: Int32(self.currentLevel), type: "level", difficulty: self.difficulty)
-        } else if (name == "Facebook_game") {
-            let facebookhelpers = FacebookHelpers()
-            facebookhelpers.sendPostWithScore(Int32(self.currentScore), clearStreak: Int32(self.currentclearStreak), level: Int32(self.currentLevel), type: "game", difficulty: self.difficulty)
+        } else if name == "Facebook_score" {
+            FacebookHelpers().postNewHighScore(self.controller, score: self.currentScore, difficulty: self.difficulty)
+        } else if name == "Facebook_clearStreak" {
+            FacebookHelpers().postNewClearStreak(self.controller, score: self.currentclearStreak, difficulty: self.difficulty)
+        } else if name == "Facebook_game" {
+            FacebookHelpers().postCompletedGame(self.controller, score: self.currentScore, clearStreak: self.currentclearStreak, difficulty: self.difficulty)
         }
     }
     

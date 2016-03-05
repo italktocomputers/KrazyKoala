@@ -1,10 +1,26 @@
-//
-//  ConfirmClearStatsScene.swift
-//  KrazyKoala
-//
-//  Created by Andrew Schools on 1/4/15.
-//  Copyright (c) 2015 Andrew Schools. All rights reserved.
-//
+/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Andrew Schools
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 import SpriteKit
 import iAd
@@ -24,13 +40,13 @@ class ConfirmClearStatsScene: SKScene {
     }
     
     override func didMoveToView(view: SKView) {
-        if (self.controller!.iAdError == true) {
-            if (self.controller!.isLoadingiAd == false) {
-                // there was an error loading iAd so let's try again
+        if self.controller!.iAdError == true {
+            if self.controller!.isLoadingiAd == false {
+                // There was an error loading iAd so let's try again
                 self.controller!.loadAds()
             }
         } else {
-            // we already have loaded iAd so let's just show it
+            // We already have loaded iAd so let's just show it
             self.controller!.adBannerView?.hidden = false
         }
         
@@ -50,7 +66,7 @@ class ConfirmClearStatsScene: SKScene {
         background.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
         self.addChild(background)
         
-        var panel = SKSpriteNode(imageNamed:"Panel")
+        let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
         panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
@@ -85,7 +101,7 @@ class ConfirmClearStatsScene: SKScene {
     }
     
     func addBackButton() {
-        var node = SKSpriteNode(imageNamed:"Backbtn")
+        let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
         node.position = CGPointMake(175, CGRectGetMidY(self.frame))
@@ -104,24 +120,23 @@ class ConfirmClearStatsScene: SKScene {
         self.addChild(self.helpers.createLabel("You better get to work...", fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)), color: SKColor.blackColor()))
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        var difficulty = ""
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         var nodeName = ""
         
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             let node = self.nodeAtPoint(location)
             
-            if (node.name != nil) {
+            if node.name != nil {
                 nodeName = node.name!
             }
             
-            if (nodeName == "Back" || nodeName == "Cancel") {
-                // go back to start menu
+            if nodeName == "Back" || nodeName == "Cancel" {
+                // Go back to start menu
                 let settingsScene = SettingsScene(size: self.size, gameViewController: self.controller!)
                 settingsScene.scaleMode = .AspectFill
                 self.view?.presentScene(settingsScene)
-            } else if (nodeName == "Okay") {
+            } else if nodeName == "Okay" {
                 self.helpers.clearStats()
                 self.showCompleteMessage()
             }

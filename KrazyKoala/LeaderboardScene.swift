@@ -1,10 +1,26 @@
-//
-//  LeaderboardsScene.swift
-//  KrazyKoala
-//
-//  Created by Andrew Schools on 1/4/15.
-//  Copyright (c) 2015 Andrew Schools. All rights reserved.
-//
+/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Andrew Schools
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 import SpriteKit
 import iAd
@@ -33,8 +49,8 @@ class LeaderboardScene: SKScene {
     }
     
     override func didMoveToView(view: SKView) {
-        var leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
-        var rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
         
         leftSwipe.direction = .Left
         rightSwipe.direction = .Right
@@ -42,13 +58,13 @@ class LeaderboardScene: SKScene {
         view.addGestureRecognizer(leftSwipe)
         view.addGestureRecognizer(rightSwipe)
         
-        if (self.controller!.iAdError == true) {
-            if (self.controller!.isLoadingiAd == false) {
-                // there was an error loading iAd so let's try again
+        if self.controller!.iAdError == true {
+            if self.controller!.isLoadingiAd == false {
+                // There was an error loading iAd so let's try again
                 self.controller!.loadAds()
             }
         } else {
-            // we already have loaded iAd so let's just show it
+            // We already have loaded iAd so let's just show it
             self.controller!.adBannerView?.hidden = false
         }
         
@@ -68,7 +84,7 @@ class LeaderboardScene: SKScene {
         background.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
         self.addChild(background)
         
-        var panel = SKSpriteNode(imageNamed:"Panel")
+        let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
         panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
@@ -89,39 +105,39 @@ class LeaderboardScene: SKScene {
         self.addSegmentedScoreButtonOn(self.segmentedBase)
         self.addSegmentedClearStreakButtonOff(self.segmentedBase)
         
-        self.gameCenterController.getLeaderBoard(self.type, difficulty: self.difficulty, callback: self.showStatsTable, range: NSMakeRange(self.loc, self.len))
+        self.gameCenterController.getLeaderBoard(self.type, difficulty: self.difficulty, range: NSMakeRange(self.loc, self.len), callback: self.showStatsTable)
         
         self.getUserScoreAndRank()
     }
     
     func handleSwipes(sender:UISwipeGestureRecognizer) {
-        if (sender.direction == .Left) {
-            // fetch next 10 records
+        if sender.direction == .Left {
+            // Fetch next 10 records
             self.loc = self.loc + self.len
             self.lastSwipe = "left"
             
-            if (self.loc < 1) {
+            if self.loc < 1 {
                 self.loc = 1
             }
             
-            self.gameCenterController.getLeaderBoard("Score", difficulty: self.difficulty, callback: self.showStatsTable, range: NSMakeRange(self.loc, self.len))
+            self.gameCenterController.getLeaderBoard("Score", difficulty: self.difficulty, range: NSMakeRange(self.loc, self.len), callback: self.showStatsTable)
         }
         
-        if (sender.direction == .Right) {
-            // fetch previous 10 records
+        if sender.direction == .Right {
+            // Fetch previous 10 records
             self.loc = self.loc - self.len
             self.lastSwipe = "right"
             
-            if (self.loc < 1) {
+            if self.loc < 1 {
                 self.loc = 1
             }
             
-            self.gameCenterController.getLeaderBoard(self.type, difficulty: self.difficulty, callback: self.showStatsTable, range: NSMakeRange(self.loc, self.len))
+            self.gameCenterController.getLeaderBoard(self.type, difficulty: self.difficulty, range: NSMakeRange(self.loc, self.len), callback: self.showStatsTable)
         }
     }
     
     func addBackButton() {
-        var node = SKSpriteNode(imageNamed:"Backbtn")
+        let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
         node.position = CGPointMake(175, CGRectGetMidY(self.frame))
@@ -131,7 +147,7 @@ class LeaderboardScene: SKScene {
     }
     
     func addSegmentedBase() -> SKSpriteNode {
-        var node = SKSpriteNode(imageNamed:"SegmentedBase")
+        let node = SKSpriteNode(imageNamed:"SegmentedBase")
         node.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+70)
         node.zPosition = 2
         node.name = "SegmentedBase"
@@ -141,7 +157,7 @@ class LeaderboardScene: SKScene {
     }
     
     func addSegmentedScoreButtonOn(parentNode: SKSpriteNode) {
-        var node = SKSpriteNode(imageNamed:"SegmentedScore1")
+        let node = SKSpriteNode(imageNamed:"SegmentedScore1")
         node.position = CGPointMake(CGRectGetMidX(parentNode.frame)-105, CGRectGetMidY(parentNode.frame))
         node.zPosition = 3
         node.name = "SegmentedScoreBtn1"
@@ -149,7 +165,7 @@ class LeaderboardScene: SKScene {
     }
     
     func addSegmentedScoreButtonOff(parentNode: SKSpriteNode) {
-        var node = SKSpriteNode(imageNamed:"SegmentedScore2")
+        let node = SKSpriteNode(imageNamed:"SegmentedScore2")
         node.position = CGPointMake(CGRectGetMidX(parentNode.frame)-105, CGRectGetMidY(parentNode.frame))
         node.zPosition = 3
         node.name = "SegmentedScoreBtn2"
@@ -157,7 +173,7 @@ class LeaderboardScene: SKScene {
     }
     
     func addSegmentedClearStreakButtonOn(parentNode: SKSpriteNode) {
-        var node = SKSpriteNode(imageNamed:"SegmentedClearStreak1")
+        let node = SKSpriteNode(imageNamed:"SegmentedClearStreak1")
         node.position = CGPointMake(CGRectGetMidX(parentNode.frame)+105, CGRectGetMidY(parentNode.frame))
         node.zPosition = 3
         node.name = "SegmentedClearStreakBtn1"
@@ -165,7 +181,7 @@ class LeaderboardScene: SKScene {
     }
     
     func addSegmentedClearStreakButtonOff(parentNode: SKSpriteNode) {
-        var node = SKSpriteNode(imageNamed:"SegmentedClearStreak2")
+        let node = SKSpriteNode(imageNamed:"SegmentedClearStreak2")
         node.position = CGPointMake(CGRectGetMidX(parentNode.frame)+105, CGRectGetMidY(parentNode.frame))
         node.zPosition = 3
         node.name = "SegmentedClearStreakBtn2"
@@ -173,7 +189,7 @@ class LeaderboardScene: SKScene {
     }
     
     func updateScoreBoard(index: Int) {
-        if (index == 0) {
+        if index == 0 {
             self.type = "Score"
             self.helpers.removeNodeByName(self, name: "SegmentedScoreBtn1")
             self.helpers.removeNodeByName(self, name: "SegmentedScoreBtn2")
@@ -181,7 +197,7 @@ class LeaderboardScene: SKScene {
             self.helpers.removeNodeByName(self, name: "SegmentedClearStreakBtn2")
             self.addSegmentedScoreButtonOn(self.segmentedBase)
             self.addSegmentedClearStreakButtonOff(self.segmentedBase)
-        } else if (index == 1) {
+        } else if index == 1 {
             self.type = "ClearStreak"
             self.helpers.removeNodeByName(self, name: "SegmentedClearStreakBtn1")
             self.helpers.removeNodeByName(self, name: "SegmentedClearStreakBtn2")
@@ -191,12 +207,12 @@ class LeaderboardScene: SKScene {
             self.addSegmentedScoreButtonOff(self.segmentedBase)
         }
         
-        self.loc = 1 // switching leaderboards so we need to start back at 1
+        self.loc = 1 // Switching leaderboards so we need to start back at 1
         
-        // get leaderboard from Apple
-        self.gameCenterController.getLeaderBoard(self.type, difficulty: self.difficulty, callback: self.showStatsTable, range: NSMakeRange(self.loc, self.len))
+        // Get leaderboard from Apple
+        self.gameCenterController.getLeaderBoard(self.type, difficulty: self.difficulty, range: NSMakeRange(self.loc, self.len), callback: self.showStatsTable)
         
-        // show user where they are in the leaderboard
+        // Show user where they are in the leaderboard
         self.getUserScoreAndRank()
     }
     
@@ -215,32 +231,34 @@ class LeaderboardScene: SKScene {
     }
     
     func showStatsTable(scores: [AnyObject]) {
-        if (scores.count == 0) {
-            if (self.lastSwipe == "left") {
+        if scores.count == 0 {
+            if self.lastSwipe == "left" {
                 self.loc = self.loc - self.len
             } else {
                 self.loc = self.loc + self.len
             }
         } else {
-            if (self.loc < 1) {
+            if self.loc < 1 {
                 self.loc = 1
             }
             
             //println(self.loc)
             
-            // clear current displayed stats
+            // Clear current displayed stats
             self.helpers.removeNodeByName(self, name: "stats")
             
             var rank = self.loc
             var i = 425
+            
             for score in scores {
                 let item = score as? GKScore
-                if (item != nil) {
+                
+                if item != nil {
                     let labelRank = self.helpers.createLabel(String(format: "#%i. ", rank), fontSize: 24, position: CGPointMake(250, self.frame.height-CGFloat(i)), name: "stats")
                     labelRank.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
                     self.addChild(labelRank)
                     
-                    let labelPlayer = self.helpers.createLabel(item!.player.alias, fontSize: 24, position: CGPointMake(325, self.frame.height-CGFloat(i)), name: "stats")
+                    let labelPlayer = self.helpers.createLabel(item!.player.alias!, fontSize: 24, position: CGPointMake(325, self.frame.height-CGFloat(i)), name: "stats")
                     labelPlayer.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
                     self.addChild(labelPlayer)
                     
@@ -256,28 +274,26 @@ class LeaderboardScene: SKScene {
         }
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        var difficulty = ""
-        
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             let node = self.nodeAtPoint(location)
             var nodeName = ""
             
-            if (node.name != nil) {
+            if node.name != nil {
                 nodeName = node.name!
             }
             
-            if (nodeName == "Back") {
+            if nodeName == "Back" {
                 self.customSegmentedControl.removeFromSuperview()
                 
-                // go back to leaderboards
+                // Go back to leaderboards
                 let scene = LeaderboardMenuScene(size: self.size, gameViewController: self.controller!)
                 scene.scaleMode = .AspectFill
                 self.view?.presentScene(scene)
-            } else if(nodeName == "SegmentedScoreBtn1" || nodeName == "SegmentedScoreBtn2") {
+            } else if nodeName == "SegmentedScoreBtn1" || nodeName == "SegmentedScoreBtn2" {
                 self.updateScoreBoard(0)
-            } else if(nodeName == "SegmentedClearStreakBtn1" || nodeName == "SegmentedClearStreakBtn2") {
+            } else if nodeName == "SegmentedClearStreakBtn1" || nodeName == "SegmentedClearStreakBtn2" {
                 self.updateScoreBoard(1)
             }
         }

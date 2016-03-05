@@ -23,18 +23,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
-        if (self.helpers.getGameCenterSetting() == true) {
-            if (self.window != nil && self.window!.rootViewController != nil) {
+        if self.helpers.getGameCenterSetting() == true {
+            if self.window != nil && self.window!.rootViewController != nil {
                 //println("Game center authentication")
                 self.gameCenterController.authenticateLocalPlayer(self.window!.rootViewController!, callback: ({}))
             }
         }
         
         return true
-    }
-    
-    func sessionStateChanged(session:FBSession, state:FBSessionState, error:NSError?) {
-        
     }
     
     func applicationWillResignActive(application: UIApplication) {

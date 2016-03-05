@@ -1,10 +1,26 @@
-//
-//  StartScene.swift
-//  KrazyKoala
-//
-//  Created by Andrew Schools on 1/4/15.
-//  Copyright (c) 2015 Andrew Schools. All rights reserved.
-//
+/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Andrew Schools
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 import SpriteKit
 import iAd
@@ -44,24 +60,15 @@ class StartScene: SKScene {
     }
     
     override func didMoveToView(view: SKView) {
-        if (self.controller.iAdError == true) {
-            if (self.controller.isLoadingiAd == false) {
-                // there was an error loading iAd so let's try again
+        if self.controller.iAdError == true {
+            if self.controller.isLoadingiAd == false {
+                // There was an error loading iAd so let's try again
                 self.controller.loadAds()
             }
         } else {
-            // we already have loaded iAd so let's just show it
+            // We already have loaded iAd so let's just show it
             self.controller.adBannerView?.hidden = false
         }
-        
-        let highScore = self.helpers.getHighScore("Easy")
-        let highClearStreak = self.helpers.getHighClearStreak("Easy")
-        
-        let highScore2 = self.helpers.getHighScore("Hard")
-        let highClearStreak2 = self.helpers.getHighClearStreak("Hard")
-        
-        let highScore3 = self.helpers.getHighScore("Krazy")
-        let highClearStreak3 = self.helpers.getHighClearStreak("Krazy")
         
         var background = SKSpriteNode()
         
@@ -79,7 +86,7 @@ class StartScene: SKScene {
         background.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
         self.addChild(background)
         
-        var panel = SKSpriteNode(imageNamed:"Panel")
+        let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
         panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
@@ -92,58 +99,50 @@ class StartScene: SKScene {
         banner.name = name
         banner.xScale = 1.5
         banner.yScale = 1.5
-        //banner.zRotation = 0.6
-        
         self.addChild(banner)
-        
-        let facebookButton = SKSpriteNode(imageNamed:"Fb")
-        //facebookButton.position = CGPointMake(CGRectGetMidX(self.frame)-100, 250)
-        facebookButton.position = CGPointMake(100, self.frame.height-175)
-        facebookButton.name = "Facebook"
-        facebookButton.zPosition = 2
-        self.addChild(facebookButton)
-        
-        let googleButton = SKSpriteNode(imageNamed:"G_")
-        googleButton.position = CGPointMake(CGRectGetMidX(self.frame), 250)
-        googleButton.name = "Google"
-        googleButton.zPosition = 2
-        //self.addChild(googleButton)
-        
-        let twitterButton = SKSpriteNode(imageNamed:"Twitter")
-        twitterButton.position = CGPointMake(CGRectGetMidX(self.frame)+100, 250)
-        twitterButton.name = "Twitter"
-        twitterButton.zPosition = 2
-        //self.addChild(twitterButton)
-        
-        let settingsButton = SKSpriteNode(imageNamed:"Settingsbtn")
-        settingsButton.position = CGPointMake(self.frame.width-100, 175)
-        settingsButton.name = "Settings"
-        settingsButton.zPosition = 2
-        self.addChild(settingsButton)
-        
-        let helpButton = SKSpriteNode(imageNamed:"Infobtn")
-        helpButton.position = CGPointMake(self.frame.width-100, self.frame.height-175)
-        helpButton.name = "Help/Info"
-        helpButton.zPosition = 2
-        self.addChild(helpButton)
-        
-        if (self.helpers.getGameCenterSetting() == true) {
-            let leaderboardButton = SKSpriteNode(imageNamed:"Leaderboardbtn")
-            leaderboardButton.position = CGPointMake(100, 175)
-            leaderboardButton.name = "Leaderboards"
-            leaderboardButton.zPosition = 2
-            self.addChild(leaderboardButton)
-        }
         
         self.addEasyButton()
         self.addHardButton()
         self.addKrazyButton()
         self.addKoala()
         self.addToolTip()
+        self.addVerticalMenu()
         
-        self.addChild(self.helpers.createLabel("Copyright 2015, Andrew Schools.  All rights reserved.", fontSize: 14, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-150)))
+        self.addChild(self.helpers.createLabel("Copyright 2016, Andrew Schools.  All rights reserved.", fontSize: 14, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-150)))
         
-        self.addChild(self.helpers.createLabel("v2.0.  Build date: " + compileDate() + ", " + compileTime(), fontSize: 10, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-165)))
+        self.addChild(self.helpers.createLabel("v2.2.  Build date: " + compileDate() + ", " + compileTime(), fontSize: 10, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-165)))
+    }
+    
+    func addVerticalMenu() {
+        let bar = SKSpriteNode(imageNamed:"VerticalMenu")
+        bar.position = CGPointMake(self.frame.width-100, self.frame.height/2)
+        bar.name = "vBar"
+        bar.zPosition = 2
+        self.addChild(bar)
+        
+        let info = SKSpriteNode(imageNamed:"Info_icon")
+        info.position = CGPointMake(CGRectGetMidX(bar.frame), CGRectGetMidY(bar.frame)+130)
+        info.name = "info"
+        info.zPosition = 3
+        self.addChild(info)
+        
+        let leader = SKSpriteNode(imageNamed:"Leaderboard_icon")
+        leader.position = CGPointMake(CGRectGetMidX(bar.frame), CGRectGetMidY(bar.frame)+45)
+        leader.name = "leaderboards"
+        leader.zPosition = 3
+        self.addChild(leader)
+        
+        let fb = SKSpriteNode(imageNamed:"Facebook_icon")
+        fb.position = CGPointMake(CGRectGetMidX(bar.frame), CGRectGetMidY(bar.frame)-35)
+        fb.name = "facebook"
+        fb.zPosition = 3
+        self.addChild(fb)
+        
+        let gear = SKSpriteNode(imageNamed:"Gear_icon")
+        gear.position = CGPointMake(CGRectGetMidX(bar.frame), CGRectGetMidY(bar.frame)-120)
+        gear.name = "settings"
+        gear.zPosition = 3
+        self.addChild(gear)
     }
     
     func addKoala() {
@@ -210,7 +209,7 @@ class StartScene: SKScene {
         self.addChild(button)
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         var difficulty = ""
         var nodeName: String = ""
         
@@ -218,11 +217,10 @@ class StartScene: SKScene {
             let location = touch.locationInNode(self)
             let node = self.nodeAtPoint(location)
             
-            if (node.name != nil) {
+            if node.name != nil {
                 nodeName = node.name!
             }
             
-            //if fire button touched, bring the rain
             if nodeName == "Hard" {
                 difficulty = "Hard"
             } else if nodeName == "Krazy" {
@@ -232,27 +230,26 @@ class StartScene: SKScene {
             }
         }
         
-        // if difficulty is empty, they clicked an ad
-        if (difficulty != "") {
+        // If difficulty is empty, they clicked an ad
+        if difficulty != "" {
             let stagingScene = StagingScene(size: self.size, gameViewController: controller, difficulty: difficulty)
             stagingScene.scaleMode = .AspectFill
             self.view?.presentScene(stagingScene)
         } else {
-            if (nodeName == "Help/Info") {
+            if nodeName == "info" {
                 let scene = HelpScene(size: self.size, gameViewController: self.controller)
                 scene.scaleMode = .AspectFill
                 self.view?.presentScene(scene)
-            } else if (nodeName == "Settings") {
+            } else if nodeName == "settings" {
                 let scene = SettingsScene(size: self.size, gameViewController: self.controller)
                 scene.scaleMode = .AspectFill
                 self.view?.presentScene(scene)
-            } else if (nodeName == "Leaderboards") {
+            } else if nodeName == "leaderboards" {
                 let scene = LeaderboardMenuScene(size: self.size, gameViewController: self.controller)
                 scene.scaleMode = .AspectFill
                 self.view?.presentScene(scene)
-            } else if (nodeName == "Facebook") {
-                let facebookhelpers = FacebookHelpers()
-                facebookhelpers.shareLink()
+            } else if nodeName == "facebook" {
+                FacebookHelpers().shareKrazyKoala(self.controller)
             }
         }
     }
@@ -261,11 +258,11 @@ class StartScene: SKScene {
         let now = NSDate()
         let interval = now.timeIntervalSinceDate(self.lastTimeToolTipShown)
         
-        if (self.toolTipIndex > self.toolTipMsg.count-1) {
+        if self.toolTipIndex > self.toolTipMsg.count-1 {
             self.toolTipIndex = 0
         }
         
-        if (interval > 15) {
+        if interval > 15 {
             self.addToolTipMsg(self.toolTipMsg[self.toolTipIndex])
         }
     }

@@ -1,5 +1,4 @@
-#import <FacebookSDK/FacebookSDK.h>
-#import "FacebookHelpers.h"
+#import <FBSDKShareKit/FBSDKShareKit.h>
 
 NSString *compileDate();
 NSString *compileTime();
