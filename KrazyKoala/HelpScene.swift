@@ -42,22 +42,26 @@ class HelpScene: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
+        /*
         if self.controller.iAdError == true {
             if self.controller.isLoadingiAd == false {
                 // there was an error loading iAd so let's try again
                 self.controller.loadAds()
             }
-        } else {
-            // we already have loaded iAd so let's just show it
-            self.controller.adBannerView?.hidden = false
         }
+        else {
+            // we already have loaded iAd so let's just show it
+            self.controller.adBannerView?.isHidden = false
+        }
+        */
         
         var background = SKSpriteNode()
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1280x800")
-        } else {
+        }
+        else {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1920x640")
         }
         
@@ -74,7 +78,7 @@ class HelpScene: SKScene {
         let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.5
         panel.yScale = 1.5
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         panel.zPosition = 1
         
         self.panel = panel
@@ -87,18 +91,28 @@ class HelpScene: SKScene {
     }
     
     func showPageNum() {
-        self.enumerateChildNodesWithName("pageNums", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            node.removeFromParent()
-        })
+        self.enumerateChildNodes(
+            withName: "pageNums",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                node.removeFromParent()
+            }
+        )
         
-        self.addChild(self.helpers.createLabel(String(format:"Page %i of %i", self.currentPage, self.totalPages), fontSize: 10, position: CGPointMake(CGRectGetMidY(self.panel.frame)+500, CGRectGetMidY(self.panel.frame)-200), name:"pageNums"))
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format:"Page %i of %i", self.currentPage, self.totalPages),
+                fontSize: 10,
+                position: CGPoint(x: self.panel.frame.midY+500, y: self.panel.frame.midY-200),
+                name:"pageNums"
+            )
+        )
     }
     
     func addForwardButton() {
         let node = SKSpriteNode(imageNamed:"Forwardbtn")
         node.xScale = 1.5
         node.yScale = 1.5
-        node.position = CGPointMake(self.frame.width-50, CGRectGetMidY(self.frame))
+        node.position = CGPoint(x: self.frame.width-50, y: self.frame.midY)
         node.zPosition = 2
         node.name = "Forward"
         self.addChild(node)
@@ -108,7 +122,7 @@ class HelpScene: SKScene {
         let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
-        node.position = CGPointMake(50, CGRectGetMidY(self.frame))
+        node.position = CGPoint(x: 50, y: self.frame.midY)
         node.zPosition = 2
         node.name = "Back"
         self.addChild(node)
@@ -131,20 +145,34 @@ class HelpScene: SKScene {
         
         var i = 0
         for line in text {
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGFloat((Int(self.frame.height-200))-(i*30))), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-200))-(i*30))),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
     }
     
     func removeHelpFileNodes() {
         // we need to hide our first set of nodes
-        self.enumerateChildNodesWithName("help_text", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            node.removeFromParent()
-        })
+        self.enumerateChildNodes(
+            withName: "help_text",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                node.removeFromParent()
+            }
+        )
         
-        self.enumerateChildNodesWithName("LittleSpaceExplorer", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            node.removeFromParent()
-        })
+        self.enumerateChildNodes(
+            withName: "LittleSpaceExplorer",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                node.removeFromParent()
+            }
+        )
     }
     
     func showBombInfo() {
@@ -161,21 +189,29 @@ class HelpScene: SKScene {
         
         for line in text {
             y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(200, y), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: 200, y: y),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"bomb_red")
-        node.position = CGPointMake(200, y-30)
+        node.position = CGPoint(x: 200, y: y-30)
         node.name = "help_text"
         node.zPosition = 99
         
         // blink so user notices it
         let blink1 = SKTexture(imageNamed: "bomb_red")
         let blink2 = SKTexture(imageNamed: "bomb_red_dark")
-        let moves = SKAction.animateWithTextures([blink1, blink2], timePerFrame: 0.4)
+        let moves = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
         
-        node.runAction(SKAction.repeatActionForever(moves), withKey:"move")
+        node.run(SKAction.repeatForever(moves), withKey:"move")
         
         self.addChild(node)
     }
@@ -192,21 +228,29 @@ class HelpScene: SKScene {
         
         for line in text {
             y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), y), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: y),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"bluerocks")
-        node.position = CGPointMake(CGRectGetMidX(self.frame), y-30)
+        node.position = CGPoint(x: self.frame.midX, y: y-30)
         node.name = "help_text"
         node.zPosition = 99
         
         // blink so user notices it
         let blink1 = SKTexture(imageNamed: "bluerocks")
         let blink2 = SKTexture(imageNamed: "rocks")
-        let moves = SKAction.animateWithTextures([blink1, blink2], timePerFrame: 0.4)
+        let moves = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
         
-        node.runAction(SKAction.repeatActionForever(moves), withKey:"move")
+        node.run(SKAction.repeatForever(moves), withKey:"move")
         
         self.addChild(node)
     }
@@ -223,21 +267,29 @@ class HelpScene: SKScene {
         
         for line in text {
             y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(self.frame.width-200, y), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.width-200, y: y),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"redrocks")
-        node.position = CGPointMake(self.frame.width-200, y-30)
+        node.position = CGPoint(x: self.frame.width-200, y: y-30)
         node.name = "help_text"
         node.zPosition = 99
         
         // blink so user notices it
         let blink1 = SKTexture(imageNamed: "redrocks")
         let blink2 = SKTexture(imageNamed: "rocks")
-        let moves = SKAction.animateWithTextures([blink1, blink2], timePerFrame: 0.4)
+        let moves = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
         
-        node.runAction(SKAction.repeatActionForever(moves), withKey:"move")
+        node.run(SKAction.repeatForever(moves), withKey:"move")
         
         self.addChild(node)
     }
@@ -258,12 +310,20 @@ class HelpScene: SKScene {
         
         for line in text {
             y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(200, y), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: 200, y: y),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"ant_stand_black")
-        node.position = CGPointMake(200, y-50)
+        node.position = CGPoint(x: 200, y: y-50)
         node.name = "help_text"
         node.zPosition = 99
         
@@ -287,12 +347,20 @@ class HelpScene: SKScene {
         
         for line in text {
             y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), y), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: y),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"ant_stand")
-        node.position = CGPointMake(CGRectGetMidX(self.frame), y-50)
+        node.position = CGPoint(x: self.frame.midX, y: y-50)
         node.name = "help_text"
         node.zPosition = 99
         
@@ -315,12 +383,20 @@ class HelpScene: SKScene {
         
         for line in text {
             y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(self.frame.width-200, y), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.width-200, y: y),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"fly_1")
-        node.position = CGPointMake(self.frame.width-200, y-50)
+        node.position = CGPoint(x: self.frame.width-200, y: y-50)
         node.name = "help_text"
         node.zPosition = 99
         
@@ -332,8 +408,25 @@ class HelpScene: SKScene {
         self.showBlueRocksInfo()
         self.showRedRocksInfo()
         
-        self.addChild(self.helpers.createLabel("Note: When throwing blue and red rocks you are not restricted by the half second rule.", fontSize: 16, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-150), name: "help_text", color: SKColor.blackColor()))
-        self.addChild(self.helpers.createLabel("Also note that if you have both red and blue rocks, red rocks are thrown first.", fontSize: 16, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-175), name: "help_text", color: SKColor.blackColor()))
+        self.addChild(
+            self.helpers.createLabel(
+                text: "Note: When throwing blue and red rocks you are not restricted by the half second rule.",
+                fontSize: 16,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY-150),
+                name: "help_text",
+                color: SKColor.black
+            )
+        )
+        
+        self.addChild(
+            self.helpers.createLabel(
+                text: "Also note that if you have both red and blue rocks, red rocks are thrown first.",
+                fontSize: 16,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY-175),
+                name: "help_text",
+                color: SKColor.black
+            )
+        )
     }
     
     func showEnemyInfoFile() {
@@ -361,14 +454,29 @@ class HelpScene: SKScene {
         var i = 0
         
         for line in text {
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGFloat((Int(self.frame.height-150))-(i*30))), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-150))-(i*30))),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
 
     }
     
     func showEasyDifficultyInfo() {
-         self.addChild(self.helpers.createLabel("Easy Mode", fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+200), name: "help_text"))
+         self.addChild(
+            self.helpers.createLabel(
+                text: "Easy Mode",
+                fontSize: 36,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                name: "help_text"
+            )
+        )
         
         let text: [String] = [
             "In Easy mode a fly and an ant are added to the scene",
@@ -381,13 +489,28 @@ class HelpScene: SKScene {
         
         var i = 0
         for line in text {
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGFloat((Int(self.frame.height-250))-(i*30))), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
     }
 
     func showHardDifficultyInfo() {
-        self.addChild(self.helpers.createLabel("Hard Mode", fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+200), name: "help_text"))
+        self.addChild(
+            self.helpers.createLabel(
+                text: "Hard Mode",
+                fontSize: 36,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                name: "help_text"
+            )
+        )
         
         let text: [String] = [
             "In Hard mode a fly and an ant are added to the scene",
@@ -401,13 +524,28 @@ class HelpScene: SKScene {
         
         var i = 0
         for line in text {
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGFloat((Int(self.frame.height-250))-(i*30))), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
     }
     
     func showKrazyDifficultyInfo() {
-        self.addChild(self.helpers.createLabel("Krazy Mode", fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+200), name: "help_text"))
+        self.addChild(
+            self.helpers.createLabel(
+                text: "Krazy Mode",
+                fontSize: 36,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                name: "help_text"
+            )
+        )
         
         let text: [String] = [
             "In Krazy mode a fly and an ant are added to the scene",
@@ -421,13 +559,28 @@ class HelpScene: SKScene {
         
         var i = 0
         for line in text {
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGFloat((Int(self.frame.height-250))-(i*30))), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
     }
     
     func showLittleSpaceExplorerAdInfo() {
-        self.addChild(self.helpers.createLabel("Other Games", fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+200), name: "help_text"))
+        self.addChild(
+            self.helpers.createLabel(
+                text: "Other Games",
+                fontSize: 36,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                name: "help_text"
+            )
+        )
         
         let text: [String] = [
             "Check out my other game Little Space Explorer.",
@@ -437,12 +590,20 @@ class HelpScene: SKScene {
         
         var i = 0
         for line in text {
-            self.addChild(self.helpers.createLabel(String(format: line), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGFloat((Int(self.frame.height-250))-(i*30))), name: "help_text", color: SKColor.blackColor()))
-            i++
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: line),
+                    fontSize: 24,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
+                    name: "help_text",
+                    color: SKColor.black
+                )
+            )
+            i+=1
         }
         
         let node = SKSpriteNode(imageNamed:"LittleSpaceExplorer640x640.jpg")
-        node.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-50)
+        node.position = CGPoint(x: self.frame.midX, y: self.frame.midY-50)
         node.name = "LittleSpaceExplorer"
         node.zPosition = 100
         node.xScale = 0.6
@@ -452,14 +613,15 @@ class HelpScene: SKScene {
     }
     
     func openAppStore() {
-        let iTunesLink = "https://itunes.apple.com/us/app/little-space-explorer/id961399066?mt=8"
-        UIApplication.sharedApplication().openURL(NSURL(string: iTunesLink)!)
+        if let url = URL(string: "https://itunes.apple.com/us/app/little-space-explorer/id961399066?mt=8") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            let node = self.nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let node = self.atPoint(location)
             var nodeName = ""
             var moveButtonPressed = false
             
@@ -468,14 +630,15 @@ class HelpScene: SKScene {
             }
             
             if nodeName == "Forward" {
-                self.helpFilePos++
+                self.helpFilePos+=1
                 moveButtonPressed = true
-                self.currentPage++
+                self.currentPage+=1
                 self.showPageNum()
-            } else if nodeName == "Back" {
-                self.helpFilePos--
+            }
+            else if nodeName == "Back" {
+                self.helpFilePos-=1
                 moveButtonPressed = true
-                self.currentPage--
+                self.currentPage-=1
                 self.showPageNum()
             }
             
@@ -483,25 +646,31 @@ class HelpScene: SKScene {
                 if self.helpFilePos == 0 {
                     self.removeHelpFileNodes()
                     self.showFirstHelpFile()
-                } else if self.helpFilePos == 1 {
+                }
+                else if self.helpFilePos == 1 {
                     self.removeHelpFileNodes()
                     self.showSecondHelpFile()
-                } else if self.helpFilePos == 2 {
+                }
+                else if self.helpFilePos == 2 {
                     self.removeHelpFileNodes()
                     self.showEnemyInfoFile()
-                } else if self.helpFilePos == 3 {
+                }
+                else if self.helpFilePos == 3 {
                     self.removeHelpFileNodes()
                     self.showLittleSpaceExplorerAdInfo()
-                } else if self.helpFilePos == 4 {
+                }
+                else if self.helpFilePos == 4 {
                     self.removeHelpFileNodes()
                     self.showThirdHelpFile()
-                } else {
+                }
+                else {
                     // Go back to start menu
                     let startScene = StartScene(size: self.size, gameViewController: self.controller)
-                    startScene.scaleMode = .AspectFill
+                    startScene.scaleMode = .aspectFill
                     self.view?.presentScene(startScene)
                 }
-            } else {
+            }
+            else {
                 if nodeName == "LittleSpaceExplorer" {
                     self.openAppStore()
                 }

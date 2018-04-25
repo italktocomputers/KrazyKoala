@@ -32,12 +32,12 @@ class Rock : Entity {
         self.gameScene = gameScene
         
         let texture = SKTexture(imageNamed: "rock")
-        super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         self.position = pointStart
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: self.size.width, height: self.size.height))
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
         self.physicsBody?.restitution = 0
-        self.physicsBody?.dynamic = true
+        self.physicsBody?.isDynamic = true
         self.physicsBody?.categoryBitMask = rockCategory
         self.physicsBody?.contactTestBitMask = flyCategory | antCategory
         self.physicsBody?.collisionBitMask = 0
@@ -45,10 +45,10 @@ class Rock : Entity {
         self.name = "rock"
         self.zPosition = 101
         
-        let move = SKAction.moveTo(pointEnd, duration: NSTimeInterval(1))
+        let move = SKAction.move(to: pointEnd, duration: TimeInterval(1))
         let removeNode = SKAction.removeFromParent()
         
-        self.runAction(SKAction.repeatActionForever(SKAction.sequence([move, removeNode])))
+        self.run(SKAction.repeatForever(SKAction.sequence([move, removeNode])))
     }
     
     required init?(coder aDecoder: NSCoder) {

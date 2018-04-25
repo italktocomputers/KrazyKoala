@@ -35,16 +35,17 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
     }
     
     // Authenticate player for game center
-    func authenticateLocalPlayer(controller: UIViewController, callback:(Void)->Void) {
+    func authenticateLocalPlayer(controller: UIViewController, callback:@escaping ()->Void) {
         let localPlayer: GKLocalPlayer = GKLocalPlayer.localPlayer()
         
-        if localPlayer.authenticated == false {
-            localPlayer.authenticateHandler = {(viewController : UIViewController?, error : NSError?) -> Void in
+        if localPlayer.isAuthenticated == false {
+            localPlayer.authenticateHandler = {(viewController : UIViewController?, error : Error?) -> Void in
                 // Handle authentication
                 if viewController != nil {
-                    controller.presentViewController(viewController!, animated: true, completion: nil)
-                } else {
-                    if localPlayer.authenticated == true {
+                    controller.present(viewController!, animated: true, completion: nil)
+                }
+                else {
+                    if localPlayer.isAuthenticated == true {
                         self.gameCenterEnabled = true
                         callback()
                     }
@@ -53,26 +54,27 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
         }
     }
     
-    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController) {
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
         
     }
 
-    func getUserScoreAndRank(type: String, difficulty: String, callback: (Int64, Int)->Void) {
-        let leaderboardRequest = GKLeaderboard() as GKLeaderboard!
-        leaderboardRequest.identifier = type + "_" + difficulty
+    func getUserScoreAndRank(type: String, difficulty: String, callback: @escaping (Int64, Int)->Void) {
+        let leaderboardRequest = GKLeaderboard() as GKLeaderboard?
+        leaderboardRequest?.identifier = type + "_" + difficulty
         
         if leaderboardRequest != nil {
-            leaderboardRequest.loadScoresWithCompletionHandler({ (scores:[GKScore]?, error:NSError?) -> Void in
+            leaderboardRequest?.loadScores(completionHandler: { (scores:[GKScore]?, error:Error?) -> Void in
                 if error != nil {
                     //handle error
                     print("Error: " + error!.localizedDescription)
-                } else {
+                }
+                else {
                     var score: Int64 = 0
                     var rank: Int = -1
                     
-                    if leaderboardRequest.localPlayerScore != nil {
-                        score = leaderboardRequest.localPlayerScore!.value
-                        rank = leaderboardRequest.localPlayerScore!.rank
+                    if leaderboardRequest?.localPlayerScore != nil {
+                        score = (leaderboardRequest?.localPlayerScore!.value)!
+                        rank = (leaderboardRequest?.localPlayerScore!.rank)!
                     }
                     
                     callback(score, rank)
@@ -81,21 +83,23 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
         }
     }
     
-    func getLeaderBoard(type: String, difficulty: String, range: NSRange=NSMakeRange(1,10), callback: ([AnyObject])->Void) {
-        let leaderboardRequest = GKLeaderboard() as GKLeaderboard!
-        leaderboardRequest.identifier = type + "_" + difficulty
-        leaderboardRequest.range = range
-        leaderboardRequest.timeScope = GKLeaderboardTimeScope.AllTime
-        leaderboardRequest.playerScope = GKLeaderboardPlayerScope.Global
+    func getLeaderBoard(type: String, difficulty: String, range: NSRange=NSMakeRange(1,10), callback: @escaping ([AnyObject])->Void) {
+        let leaderboardRequest = GKLeaderboard() as GKLeaderboard?
+        leaderboardRequest?.identifier = type + "_" + difficulty
+        leaderboardRequest?.range = range
+        leaderboardRequest?.timeScope = GKLeaderboardTimeScope.allTime
+        leaderboardRequest?.playerScope = GKLeaderboardPlayerScope.global
         
         if leaderboardRequest != nil {
-            leaderboardRequest.loadScoresWithCompletionHandler({ (scores:[GKScore]?, error:NSError?) -> Void in
+            leaderboardRequest?.loadScores(completionHandler: { (scores:[GKScore]?, error:Error?) -> Void in
                 if error != nil {
                     print("Error: " + error!.localizedDescription)
-                } else {
-                    if leaderboardRequest.scores != nil {
-                        callback(leaderboardRequest.scores!)
-                    } else {
+                }
+                else {
+                    if leaderboardRequest?.scores != nil {
+                        callback((leaderboardRequest?.scores!)!)
+                    }
+                    else {
                         let emptyArray = [AnyObject]()
                         callback(emptyArray)
                     }
@@ -106,22 +110,26 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
     
     func saveScore(type: String, score: Int, difficulty: String) {
         // If player is logged in to GC, then report the score
-        if GKLocalPlayer.localPlayer().authenticated {
+        if GKLocalPlayer.localPlayer().isAuthenticated {
             let gkScore = GKScore(leaderboardIdentifier: type + "_" + difficulty)
             gkScore.value = Int64(score)
-            GKScore.reportScores([gkScore], withCompletionHandler: ( { (error: NSError?) -> Void in
-                if error != nil {
-                    print("Error: " + error!.localizedDescription)
-                } else {
-                    print("Score reported: %i", gkScore.value)
-                }
-            }))
+            GKScore.report(
+                [gkScore],
+                withCompletionHandler: ( { (error: Error?) -> Void in
+                    if error != nil {
+                        print("Error: " + error!.localizedDescription)
+                    }
+                    else {
+                        print("Score reported: %i", gkScore.value)
+                    }
+                })
+            )
         }
     }
     
-    func getAchievements(callback: ([AnyObject])->Void) {
-        if GKLocalPlayer.localPlayer().authenticated {
-            GKAchievementDescription.loadAchievementDescriptionsWithCompletionHandler({(achievements, error) -> Void in
+    func getAchievements(callback: @escaping ([AnyObject])->Void) {
+        if GKLocalPlayer.localPlayer().isAuthenticated {
+            GKAchievementDescription.loadAchievementDescriptions(completionHandler: {(achievements, error) -> Void in
                 if error != nil {
                     print(error)
                 }
@@ -136,10 +144,11 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
     func reportAchievement(identifier: String, percent: Double) {
         let achievement = GKAchievement(identifier: identifier)
         achievement.percentComplete = percent
-        GKAchievement.reportAchievements([achievement], withCompletionHandler: {(error)->Void in
+        GKAchievement.report([achievement], withCompletionHandler: {(error)->Void in
             if error != nil {
                 print(error)
-            } else {
+            }
+            else {
                 print("Achievement reported to Game Center: " + identifier)
             }
         })

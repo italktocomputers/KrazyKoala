@@ -41,22 +41,25 @@ class StagingScene: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
+        /*
         if self.controller!.iAdError == true {
             if self.controller!.isLoadingiAd == false {
                 // There was an error loading iAd so let's try again
                 self.controller!.loadAds()
             }
-        } else {
-            // We already have loaded iAd so let's just show it
-            self.controller!.adBannerView?.hidden = false
         }
-        
+        else {
+            // We already have loaded iAd so let's just show it
+            self.controller!.adBannerView?.isHidden = false
+        }
+        */
         var background = SKSpriteNode()
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1280x800")
-        } else {
+        }
+        else {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1920x640")
         }
         
@@ -71,12 +74,12 @@ class StagingScene: SKScene {
         let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         panel.zPosition = 1
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"KrazyKoalaRibbon")
-        banner.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
         banner.zPosition = 2
         banner.name = name
         banner.xScale = 1.5
@@ -88,26 +91,38 @@ class StagingScene: SKScene {
         
         self.addBestGameStats()
         self.addLastGameStats()
-        self.addPlayButton(panel)
-        self.addBackButton(panel)
+        self.addPlayButton(parentPanel: panel)
+        self.addBackButton(parentPanel: panel)
     }
     
     func addBestGameStats() {
         let panel = SKSpriteNode(imageNamed:"Panel2")
         panel.xScale = 1.1
         panel.yScale = 1.1
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+35)
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY+35)
         panel.zPosition = 2
         self.addChild(panel)
         
-        let label = self.helpers.createLabel("Best Game", fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+50), name: "HighScoreLabel", color: SKColor.blackColor())
+        let label = self.helpers.createLabel(
+            text: "Best Game",
+            fontSize: 36,
+            position: CGPoint(x: self.frame.midX, y: self.frame.midY+50),
+            name: "HighScoreLabel",
+            color: SKColor.black
+        )
         
         self.addChild(label)
         
-        let highScore = self.helpers.getHighScore(self.difficulty)
-        let highClearStreak = self.helpers.getHighClearStreak(self.difficulty)
+        let highScore = self.helpers.getHighScore(difficulty: self.difficulty)
+        let highClearStreak = self.helpers.getHighClearStreak(difficulty: self.difficulty)
         
-        let label2 = self.helpers.createLabel("Score: " + String(highScore) + " | " + "Clear Streak: " + String(highClearStreak), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)), name: "HighScoreLabel", color: SKColor.blackColor())
+        let label2 = self.helpers.createLabel(
+            text: "Score: " + String(highScore) + " | " + "Clear Streak: " + String(highClearStreak),
+            fontSize: 24,
+            position: CGPoint(x: self.frame.midX, y: self.frame.midY),
+            name: "HighScoreLabel",
+            color: SKColor.black
+        )
         
         self.addChild(label2)
     }
@@ -116,25 +131,36 @@ class StagingScene: SKScene {
         let panel = SKSpriteNode(imageNamed:"Panel2")
         panel.xScale = 1.1
         panel.yScale = 1.1
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-100)
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY-100)
         panel.zPosition = 2
         self.addChild(panel)
         
-        let label = self.helpers.createLabel("Last Game", fontSize: 36, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-85), name: "HighScoreLabel", color: SKColor.blackColor())
+        let label = self.helpers.createLabel(
+            text: "Last Game",
+            fontSize: 36,
+            position: CGPoint(x: self.frame.midX, y: self.frame.midY-85),
+            name: "HighScoreLabel",
+            color: SKColor.black
+        )
         
         self.addChild(label)
         
-        let highScore = self.helpers.getLastScore(self.difficulty)
-        let highClearStreak = self.helpers.getLastClearStreak(self.difficulty)
+        let highScore = self.helpers.getLastScore(difficulty: self.difficulty)
+        let highClearStreak = self.helpers.getLastClearStreak(difficulty: self.difficulty)
         
-        let label2 = self.helpers.createLabel("Score: " + String(highScore) + " | " + "Clear Streak: " + String(highClearStreak), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-135), name: "HighScoreLabel", color: SKColor.blackColor())
+        let label2 = self.helpers.createLabel(
+            text: "Score: " + String(highScore) + " | " + "Clear Streak: " + String(highClearStreak),
+            fontSize: 24,
+            position: CGPoint(x: self.frame.midX, y: self.frame.midY-135),
+            name: "HighScoreLabel",
+            color: SKColor.black)
         
         self.addChild(label2)
     }
     
     func addPlayButton(parentPanel: SKSpriteNode) {
         let button = SKSpriteNode(imageNamed:"Playbtn")
-        button.position = CGPointMake(self.frame.width-175, CGRectGetMidY(self.frame))
+        button.position = CGPoint(x: self.frame.width-175, y: self.frame.midY)
         button.zPosition = 2
         button.name = "Play"
         self.addChild(button)
@@ -142,7 +168,7 @@ class StagingScene: SKScene {
     
     func addBackButton(parentPanel: SKSpriteNode) {
         let button = SKSpriteNode(imageNamed:"Backbtn")
-        button.position = CGPointMake(175, CGRectGetMidY(self.frame))
+        button.position = CGPoint(x: 175, y: self.frame.midY)
         button.zPosition = 2
         button.name = "Back"
         button.xScale = 1.5
@@ -152,34 +178,46 @@ class StagingScene: SKScene {
     
     func addHighScorePanel(parentPanel: SKSpriteNode) {
         let panel = SKSpriteNode(imageNamed:"HighScore")
-        panel.position = CGPointMake(CGRectGetMidX(parentPanel.frame), CGRectGetMidY(parentPanel.frame)+25)
+        panel.position = CGPoint(x: parentPanel.frame.midX, y: parentPanel.frame.midY+25)
         panel.zPosition = 2
         self.addChild(panel)
         
-        let highScore = self.helpers.getHighScore(self.difficulty)
-        let label = self.helpers.createLabel(String(highScore), fontSize: 36, position: CGPointMake(CGRectGetMidX(panel.frame), CGRectGetMidY(panel.frame)-25), name: "HighScoreLabel", color: SKColor.blackColor())
+        let highScore = self.helpers.getHighScore(difficulty: self.difficulty)
+        let label = self.helpers.createLabel(
+            text: String(highScore),
+            fontSize: 36,
+            position: CGPoint(x: panel.frame.midX, y: panel.frame.midY-25),
+            name: "HighScoreLabel",
+            color: SKColor.black
+        )
         
         self.addChild(label)
     }
     
     func addHighClearStreakPanel(parentPanel: SKSpriteNode) {
         let panel = SKSpriteNode(imageNamed:"HighClearStreak")
-        panel.position = CGPointMake(CGRectGetMidX(parentPanel.frame), CGRectGetMidY(parentPanel.frame)-100)
+        panel.position = CGPoint(x: parentPanel.frame.midX, y: parentPanel.frame.midY-100)
         panel.zPosition = 2
         self.addChild(panel)
         
-        let highClearStreak = self.helpers.getHighClearStreak(self.difficulty)
-        let label = self.helpers.createLabel(String(highClearStreak), fontSize: 36, position: CGPointMake(CGRectGetMidX(panel.frame), CGRectGetMidY(panel.frame)-25), name: "HighClearStreakLabel", color: SKColor.blackColor())
+        let highClearStreak = self.helpers.getHighClearStreak(difficulty: self.difficulty)
+        let label = self.helpers.createLabel(
+            text: String(highClearStreak),
+            fontSize: 36,
+            position: CGPoint(x: panel.frame.midX, y: panel.frame.midX-25),
+            name: "HighClearStreakLabel",
+            color: SKColor.black
+        )
         
         self.addChild(label)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         var nodeName: String = ""
         
         for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            let node = self.nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let node = self.atPoint(location)
             
             if node.name != nil {
                 nodeName = node.name!
@@ -188,11 +226,12 @@ class StagingScene: SKScene {
         
         if nodeName == "Play" {
             let gameScene = GameScene(size: self.size, gameViewController: self.controller!, difficulty: self.difficulty)
-            gameScene.scaleMode = .AspectFill
+            gameScene.scaleMode = .aspectFill
             self.view?.presentScene(gameScene)
-        } else if nodeName == "Back" {
+        }
+        else if nodeName == "Back" {
             let startScene = StartScene(size: self.size, gameViewController: self.controller!)
-            startScene.scaleMode = .AspectFill
+            startScene.scaleMode = .aspectFill
             self.view?.presentScene(startScene)
         }
     }

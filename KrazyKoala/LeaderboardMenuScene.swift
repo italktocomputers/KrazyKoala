@@ -44,22 +44,26 @@ class LeaderboardMenuScene: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
+        /*
         if self.controller!.iAdError == true {
             if self.controller!.isLoadingiAd == false {
                 // There was an error loading iAd so let's try again
                 self.controller!.loadAds()
             }
-        } else {
-            // We already have loaded iAd so let's just show it
-            self.controller!.adBannerView?.hidden = false
         }
+        else {
+            // We already have loaded iAd so let's just show it
+            self.controller!.adBannerView?.isHidden = false
+        }
+        */
         
         var background = SKSpriteNode()
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1280x800")
-        } else {
+        }
+        else {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1920x640")
         }
         
@@ -74,12 +78,12 @@ class LeaderboardMenuScene: SKScene {
         let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         panel.zPosition = 1
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"LeaderboardsRibbon")
-        banner.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
         banner.zPosition = 2
         banner.name = name
         banner.xScale = 1.5
@@ -97,7 +101,7 @@ class LeaderboardMenuScene: SKScene {
         let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
-        node.position = CGPointMake(175, CGRectGetMidY(self.frame))
+        node.position = CGPoint(x: 175, y: self.frame.midY)
         node.zPosition = 2
         node.name = "Back"
         self.addChild(node)
@@ -105,7 +109,7 @@ class LeaderboardMenuScene: SKScene {
     
     func addEasyButton() {
         let button = SKSpriteNode(imageNamed:"EasyButton")
-        button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+75)
+        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY+75)
         button.zPosition = 2
         button.name = name
         button.name = "Easy"
@@ -114,7 +118,7 @@ class LeaderboardMenuScene: SKScene {
         let node2 = SKSpriteNode(imageNamed:"LeaderboardGreenbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
-        node2.position = CGPointMake(CGRectGetMidX(button.frame)+75, CGRectGetMidY(button.frame)+25)
+        node2.position = CGPoint(x: button.frame.midX+75, y: button.frame.midY+25)
         node2.zPosition = 3
         node2.name = "Easy"
         node2.xScale = 1.1
@@ -124,7 +128,7 @@ class LeaderboardMenuScene: SKScene {
     
     func addHardButton() {
         let button = SKSpriteNode(imageNamed:"HardButton")
-        button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-25)
+        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY-25)
         button.zPosition = 2
         button.name = name
         button.name = "Hard"
@@ -133,7 +137,7 @@ class LeaderboardMenuScene: SKScene {
         let node2 = SKSpriteNode(imageNamed:"Leaderboardbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
-        node2.position = CGPointMake(CGRectGetMidX(button.frame)+75, CGRectGetMidY(button.frame)+25)
+        node2.position = CGPoint(x: button.frame.midX+75, y: button.frame.midY+25)
         node2.zPosition = 3
         node2.name = "Hard"
         node2.xScale = 1.1
@@ -143,7 +147,7 @@ class LeaderboardMenuScene: SKScene {
     
     func addKrazyButton() {
         let button = SKSpriteNode(imageNamed:"KrazyButton")
-        button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-125)
+        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY-125)
         button.zPosition = 2
         button.name = name
         button.name = "Krazy"
@@ -152,7 +156,7 @@ class LeaderboardMenuScene: SKScene {
         let node2 = SKSpriteNode(imageNamed:"LeaderboardRedbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
-        node2.position = CGPointMake(CGRectGetMidX(button.frame)+75, CGRectGetMidY(button.frame)+25)
+        node2.position = CGPoint(x: button.frame.midX+75, y: button.frame.midY+25)
         node2.zPosition = 3
         node2.name = "Krazy"
         node2.xScale = 1.1
@@ -160,10 +164,10 @@ class LeaderboardMenuScene: SKScene {
         self.addChild(node2)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            let node = self.nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let node = self.atPoint(location)
             var nodeName = ""
             
             if node.name != nil {
@@ -174,21 +178,24 @@ class LeaderboardMenuScene: SKScene {
             
             if nodeName == "Hard" {
                 difficulty = "Hard"
-            } else if nodeName == "Krazy" {
+            }
+            else if nodeName == "Krazy" {
                 difficulty = "Krazy"
-            } else if nodeName == "Easy" {
+            }
+            else if nodeName == "Easy" {
                 difficulty = "Easy"
             }
             
             // If difficulty is empty, they did not click a button
             if difficulty != "" {
                 let leaderboardScene = LeaderboardScene(size: self.size, gameViewController: self.controller!, difficulty: difficulty)
-                leaderboardScene.scaleMode = .AspectFill
+                leaderboardScene.scaleMode = .aspectFill
                 self.view?.presentScene(leaderboardScene)
-            } else if nodeName == "Back" {
+            }
+            else if nodeName == "Back" {
                 // Go back to start menu
                 let startScene = StartScene(size: self.size, gameViewController: self.controller!)
-                startScene.scaleMode = .AspectFill
+                startScene.scaleMode = .aspectFill
                 self.view?.presentScene(startScene)
             }
         }

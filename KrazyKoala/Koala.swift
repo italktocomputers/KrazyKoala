@@ -32,7 +32,7 @@ class Koala : Entity {
     var canThrow = true
     var numRedRocks = 0
     var numBlueRocks = 0
-    var lastTimeThrown = NSDate()
+    var lastTimeThrown = Date()
     var koalaAnimationWalkingSpeed = 0.2
     
     var gameScene: GameScene
@@ -48,14 +48,14 @@ class Koala : Entity {
         self.difficulty = difficulty
         
         let texture = SKTexture(imageNamed: "koala_walk01")
-        super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         if difficulty == "Hard" || difficulty == "Krazy" {
             self.lives = 3
         }
         
         self.position = CGPoint(x: 150, y: 400)
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: self.size.width, height: self.size.height))
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
         self.physicsBody?.restitution = 0
         self.physicsBody?.allowsRotation = false // node should always be upright
         self.physicsBody?.categoryBitMask = koalaCategory
@@ -76,7 +76,7 @@ class Koala : Entity {
         let now = NSDate()
         
         // they can only throw every half seconds
-        let interval = now.timeIntervalSinceDate(self.lastTimeThrown)
+        let interval = now.timeIntervalSince(self.lastTimeThrown)
         
         if interval > 0.5 {
             self.canThrow = true
@@ -87,39 +87,39 @@ class Koala : Entity {
         // show walk animation
         let walk1 = SKTexture(imageNamed: "koala_walk01")
         let walk2 = SKTexture(imageNamed: "koala_walk02")
-        let walkAni = SKAction.animateWithTextures([walk1, walk2], timePerFrame: self.koalaAnimationWalkingSpeed)
+        let walkAni = SKAction.animate(with: [walk1, walk2], timePerFrame: self.koalaAnimationWalkingSpeed)
         
-        self.runAction(SKAction.repeatActionForever(walkAni), withKey:"walk")
+        self.run(SKAction.repeatForever(walkAni), withKey:"walk")
     }
     
     func die() {
-        self.removeActionForKey("walk")
-        self.removeActionForKey("jump")
+        self.removeAction(forKey: "walk")
+        self.removeAction(forKey: "jump")
         
         self.physicsBody?.affectedByGravity = false
         self.physicsBody?.collisionBitMask = 0
         self.physicsBody?.velocity = CGVector(dx: 0,dy: 0)
         
-        let fade = SKAction.fadeOutWithDuration(2)
-        self.runAction(fade)
+        let fade = SKAction.fadeOut(withDuration: 2)
+        self.run(fade)
         
-        let rotate = SKAction.rotateByAngle(10, duration: 2)
-        self.runAction(rotate)
+        let rotate = SKAction.rotate(byAngle: 10, duration: 2)
+        self.run(rotate)
         
-        let implode = SKAction.scaleTo(50, duration: 2)
-        self.runAction(implode)
+        let implode = SKAction.scale(to: 50, duration: 2)
+        self.run(implode)
     }
     
     func jump() {
         // remove walking animation
-        self.removeActionForKey("walk")
+        self.removeAction(forKey: "walk")
         
         // show jump animation
         let jump = SKAction.setTexture(SKTexture(imageNamed: "koala_jump"))
-        self.runAction(jump)
+        self.run(jump)
         
         // play jump sound
-        self.runAction(self.jumpWav, withKey:"jump")
+        self.run(self.jumpWav, withKey:"jump")
         
         // apply jump
         self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 250))
@@ -127,7 +127,7 @@ class Koala : Entity {
     
     func takeHit() {
         // good guy and bad guy collide so play sound
-        self.gameScene.runAction(self.hitWav)
+        self.gameScene.run(self.hitWav)
         
         if self.helpers.getVibrationSetting() == true {
             // vibrate to notify user of contact
@@ -141,17 +141,20 @@ class Koala : Entity {
         
         let image1 = SKTexture(imageNamed: "bang")
         let removeNode = SKAction.removeFromParent()
-        let images = SKAction.animateWithTextures([image1], timePerFrame: 0.2)
+        let images = SKAction.animate(with: [image1], timePerFrame: 0.2)
         
-        let deQueue = SKAction.runBlock({()
-            self.gameScene.poofQueue.removeObject(node)
+        let deQueue = SKAction.run({()
+            let index = self.gameScene.poofQueue.index(of: node)
+            if index != nil {
+                self.gameScene.poofQueue.remove(at: index!)
+            }
         })
         
-        node.runAction(SKAction.repeatActionForever(SKAction.sequence([images, deQueue, removeNode])))
+        node.run(SKAction.repeatForever(SKAction.sequence([images, deQueue, removeNode])))
         
         self.gameScene.addChild(node)
         
-        self.lives-- // take away a life
+        self.lives-=1 // take away a life
         
         // save highest kill streak before resetting
         if self.gameScene.clearStreak > self.gameScene.gameHighclearStreak {
@@ -163,7 +166,7 @@ class Koala : Entity {
         self.gameScene.showclearStreakLabel()
         
         // update life bar
-        self.gameScene.addLifeBar(self.lives)
+        self.gameScene.addLifeBar(numLives: self.lives)
         
         if self.lives == 0 {
             // game over!
@@ -179,42 +182,94 @@ class Koala : Entity {
     func throwRock() {
         if self.numRedRocks > 0 {
             self.throwRedRocks()
-            self.numRedRocks--
-            self.gameScene.updateRedRockIndicator(self.numRedRocks)
-            self.lastTimeThrown = NSDate()
-        } else if self.numBlueRocks > 0 {
+            self.numRedRocks-=1
+            self.gameScene.updateRedRockIndicator(total: self.numRedRocks)
+            self.lastTimeThrown = Date()
+        }
+        else if self.numBlueRocks > 0 {
             self.throwBlueRock()
-            self.numBlueRocks--
-            self.gameScene.updateBlueRockIndicator(self.numBlueRocks)
-            self.lastTimeThrown = NSDate()
-        } else {
+            self.numBlueRocks-=1
+            self.gameScene.updateBlueRockIndicator(total: self.numBlueRocks)
+            self.lastTimeThrown = Date()
+        }
+        else {
             if self.canThrow == true {
                 self.throwPlainRock()
                 self.canThrow = false
-                self.lastTimeThrown = NSDate()
+                self.lastTimeThrown = Date()
             }
         }
     }
     
     private func throwPlainRock() {
-        self.gameScene.addChild(Rock(pointStart: self.position, pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y), gameScene: self.gameScene))
+        self.gameScene.addChild(
+            Rock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                gameScene: self.gameScene
+            )
+        )
     }
     
     private func throwRedRocks() {
         // a spray of rocks
         for i in 1...10 {
-            self.gameScene.addChild(RedRock(pointStart: self.position, pointEnd: CGPoint(x: self.position.x+CGFloat(1000), y: self.position.y-500+CGFloat(i*100)), gameScene: self.gameScene))
+            self.gameScene.addChild(
+                RedRock(
+                    pointStart: self.position,
+                    pointEnd: CGPoint(x: self.position.x+CGFloat(1000), y: self.position.y-500+CGFloat(i*100)),
+                    gameScene: self.gameScene
+                )
+            )
         }
     }
     
     private func throwBlueRock() {
         // throw 5 rocks, one after another
         // blue rocks travel much faster than normal and red rocks
-        self.gameScene.addChild(BlueRock(pointStart: self.position, pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y), speed: NSTimeInterval(0.1), gameScene: self.gameScene))
-        self.gameScene.addChild(BlueRock(pointStart: self.position, pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y), speed: NSTimeInterval(0.2), gameScene: self.gameScene))
-        self.gameScene.addChild(BlueRock(pointStart: self.position, pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y), speed: NSTimeInterval(0.3), gameScene: self.gameScene))
-        self.gameScene.addChild(BlueRock(pointStart: self.position, pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y), speed: NSTimeInterval(0.4), gameScene: self.gameScene))
-        self.gameScene.addChild(BlueRock(pointStart: self.position, pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y), speed: NSTimeInterval(0.5), gameScene: self.gameScene))
+        self.gameScene.addChild(
+            BlueRock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                speed: TimeInterval(0.1),
+                gameScene: self.gameScene
+            )
+        )
+        
+        self.gameScene.addChild(
+            BlueRock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                speed: TimeInterval(0.2), gameScene: self.gameScene
+            )
+        )
+        
+        self.gameScene.addChild(
+            BlueRock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                speed: TimeInterval(0.3),
+                gameScene: self.gameScene
+            )
+        )
+        
+        self.gameScene.addChild(
+            BlueRock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                speed: TimeInterval(0.4),
+                gameScene: self.gameScene
+            )
+        )
+        
+        self.gameScene.addChild(
+            BlueRock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                speed: TimeInterval(0.5),
+                gameScene: self.gameScene
+            )
+        )
     }
 
 }

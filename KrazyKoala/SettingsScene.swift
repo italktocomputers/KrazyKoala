@@ -43,22 +43,26 @@ class SettingsScene: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
+        /*
         if self.controller!.iAdError == true {
             if self.controller!.isLoadingiAd == false {
                 // There was an error loading iAd so let's try again
                 self.controller!.loadAds()
             }
-        } else {
-            // We already have loaded iAd so let's just show it
-            self.controller!.adBannerView?.hidden = false
         }
+        else {
+            // We already have loaded iAd so let's just show it
+            self.controller!.adBannerView?.isHidden = false
+        }
+        */
         
         var background = SKSpriteNode()
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1280x800")
-        } else {
+        }
+        else {
             background = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1920x640")
         }
         
@@ -73,12 +77,12 @@ class SettingsScene: SKScene {
         let panel = SKSpriteNode(imageNamed:"Panel")
         panel.xScale = 1.1
         panel.yScale = 1.1
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         panel.zPosition = 1
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"KrazyKoalaRibbon")
-        banner.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
         banner.zPosition = 2
         banner.name = name
         banner.xScale = 1.5
@@ -88,87 +92,113 @@ class SettingsScene: SKScene {
         self.addBackButton()
         
         // Vibration
-        self.addChild(self.helpers.createLabel(String(format: "Vibrate on: "), fontSize: 24, position: CGPointMake(CGRectGetMidX(panel.frame)-200, CGRectGetMidY(panel.frame)+75)))
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Vibrate on: "),
+                fontSize: 24,
+                position: CGPoint(x: panel.frame.midX-200, y: panel.frame.midY+75)
+            )
+        )
         
         if self.helpers.getVibrationSetting() == true {
             self.vibrationSwitch = SKSpriteNode(imageNamed:"button_checked")
-        } else {
+        }
+        else {
             self.vibrationSwitch = SKSpriteNode(imageNamed:"button_unchecked")
         }
         
-        self.vibrationSwitch.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+75)
+        self.vibrationSwitch.position = CGPoint(x: self.frame.midX, y: self.frame.midY+75)
         self.vibrationSwitch.name = "vibration"
         self.vibrationSwitch.zPosition = 2
         self.addChild(self.vibrationSwitch)
         
         // Play music
-        self.addChild(self.helpers.createLabel(String(format: "Music on: "), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame)-200, CGRectGetMidY(self.frame))))
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Music on: "),
+                fontSize: 24,
+                position: CGPoint(x: self.frame.midX-200, y: self.frame.midY)
+            )
+        )
         
         if self.helpers.getMusicSetting() == true {
             self.musicSwitch = SKSpriteNode(imageNamed:"button_checked")
-        } else {
+        }
+        else {
             self.musicSwitch = SKSpriteNode(imageNamed:"button_unchecked")
         }
         
-        self.musicSwitch.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        self.musicSwitch.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         self.musicSwitch.name = "music"
         self.musicSwitch.zPosition = 2
         self.addChild(self.musicSwitch)
         
         // Game center
-        self.addChild(self.helpers.createLabel(String(format: "Game center on: "), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame)-200, CGRectGetMidY(self.frame)-75)))
+        self.addChild(self.helpers.createLabel(
+            text: String(format: "Game center on: "),
+            fontSize: 24,
+            position: CGPoint(x: self.frame.midX-200, y: self.frame.midY-75))
+        )
         
         if self.helpers.getGameCenterSetting() == true {
             self.gameCenterSwitch = SKSpriteNode(imageNamed:"button_checked")
-        } else {
+        }
+        else {
             self.gameCenterSwitch = SKSpriteNode(imageNamed:"button_unchecked")
         }
         
-        self.gameCenterSwitch.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)-75)
+        self.gameCenterSwitch.position = CGPoint(x: self.frame.midX, y: self.frame.midY-75)
         self.gameCenterSwitch.name = "gamecenter"
         self.gameCenterSwitch.zPosition = 2
         self.addChild(self.gameCenterSwitch)
         
         // Clear stats
-        self.addChild(self.helpers.createLabel(String(format: "Clear Stats"), fontSize: 24, position: CGPointMake(CGRectGetMidX(self.frame)+250, CGRectGetMidY(self.frame)-175), color: SKColor.blueColor()))
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Clear Stats"),
+                fontSize: 24,
+                position: CGPoint(x: self.frame.midX+250, y: self.frame.midY-175),
+                color: SKColor.blue
+            )
+        )
     }
     
     func addBackButton() {
         let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
-        node.position = CGPointMake(175, CGRectGetMidY(self.frame))
+        node.position = CGPoint(x: 175, y: self.frame.midY)
         node.zPosition = 2
         node.name = "Back"
         self.addChild(node)
     }
     
     func reportScoresToGameCenter() {
-        let topScoreEasy = self.helpers.getHighScore("Easy")
-        let topScoreHard = self.helpers.getHighScore("Hard")
-        let topScoreKrazy = self.helpers.getHighScore("Krazy")
+        let topScoreEasy = self.helpers.getHighScore(difficulty: "Easy")
+        let topScoreHard = self.helpers.getHighScore(difficulty: "Hard")
+        let topScoreKrazy = self.helpers.getHighScore(difficulty: "Krazy")
         
-        let topClearStreakEasy = self.helpers.getHighClearStreak("Easy")
-        let topClearStreakHard = self.helpers.getHighClearStreak("Hard")
-        let topClearStreakKrazy = self.helpers.getHighClearStreak("Krazy")
+        let topClearStreakEasy = self.helpers.getHighClearStreak(difficulty: "Easy")
+        let topClearStreakHard = self.helpers.getHighClearStreak(difficulty: "Hard")
+        let topClearStreakKrazy = self.helpers.getHighClearStreak(difficulty: "Krazy")
         
         // Report top scores for the first time
-        self.gameCenterController.saveScore("Score",  score: topScoreEasy, difficulty: "Easy")
-        self.gameCenterController.saveScore("ClearStreak",  score: topClearStreakEasy, difficulty: "Easy")
+        self.gameCenterController.saveScore(type: "Score",  score: topScoreEasy, difficulty: "Easy")
+        self.gameCenterController.saveScore(type: "ClearStreak",  score: topClearStreakEasy, difficulty: "Easy")
         
-        self.gameCenterController.saveScore("Score",  score: topScoreHard, difficulty: "Hard")
-        self.gameCenterController.saveScore("ClearStreak",  score: topClearStreakHard, difficulty: "Hard")
+        self.gameCenterController.saveScore(type: "Score",  score: topScoreHard, difficulty: "Hard")
+        self.gameCenterController.saveScore(type: "ClearStreak",  score: topClearStreakHard, difficulty: "Hard")
         
-        self.gameCenterController.saveScore("Score",  score: topScoreKrazy, difficulty: "Krazy")
-        self.gameCenterController.saveScore("ClearStreak",  score: topClearStreakKrazy, difficulty: "Krazy")
+        self.gameCenterController.saveScore(type: "Score",  score: topScoreKrazy, difficulty: "Krazy")
+        self.gameCenterController.saveScore(type: "ClearStreak",  score: topClearStreakKrazy, difficulty: "Krazy")
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         var nodeName = ""
         
         for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            let node = self.nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let node = self.atPoint(location)
             
             if node.name != nil {
                 nodeName = node.name!
@@ -177,42 +207,49 @@ class SettingsScene: SKScene {
             if nodeName == "Back" {
                 // Go back to start menu
                 let startScene = StartScene(size: self.size, gameViewController: self.controller!)
-                startScene.scaleMode = .AspectFill
+                startScene.scaleMode = .aspectFill
                 self.view?.presentScene(startScene)
-            } else if nodeName == "music" {
+            }
+            else if nodeName == "music" {
                 if self.helpers.getMusicSetting() == true {
-                    self.helpers.saveMusicSetting(false)
+                    self.helpers.saveMusicSetting(option: false)
                     self.musicSwitch.texture = SKTexture(imageNamed: "button_unchecked")
-                } else {
-                    self.helpers.saveMusicSetting(true)
+                }
+                else {
+                    self.helpers.saveMusicSetting(option: true)
                     self.musicSwitch.texture = SKTexture(imageNamed: "button_checked")
                 }
-            } else if nodeName == "vibration" {
+            }
+            else if nodeName == "vibration" {
                 if self.helpers.getVibrationSetting() == true {
-                    self.helpers.saveVibrationSetting(false)
+                    self.helpers.saveVibrationSetting(option: false)
                     self.vibrationSwitch.texture = SKTexture(imageNamed: "button_unchecked")
-                } else {
-                    self.helpers.saveVibrationSetting(true)
+                }
+                else {
+                    self.helpers.saveVibrationSetting(option: true)
                     self.vibrationSwitch.texture = SKTexture(imageNamed: "button_checked")
                 }
-            } else if nodeName == "gamecenter" {
+            }
+            else if nodeName == "gamecenter" {
                 if self.helpers.getGameCenterSetting() == true {
-                    self.helpers.saveGameCenterSetting(false)
+                    self.helpers.saveGameCenterSetting(option: false)
                     self.gameCenterSwitch.texture = SKTexture(imageNamed: "button_unchecked")
-                } else {
-                    self.helpers.saveGameCenterSetting(true)
+                }
+                else {
+                    self.helpers.saveGameCenterSetting(option: true)
                     self.gameCenterSwitch.texture = SKTexture(imageNamed: "button_checked")
                     
                     // Enable game center
                     if self.view != nil && self.view!.window != nil && self.view!.window!.rootViewController != nil {
                         // When they enable game center we want to report their top scores
-                        self.gameCenterController.authenticateLocalPlayer(self.view!.window!.rootViewController!, callback: self.reportScoresToGameCenter)
+                        self.gameCenterController.authenticateLocalPlayer(controller: self.view!.window!.rootViewController!, callback: self.reportScoresToGameCenter)
                         //println("Update gamecenter stats")
                     }
                 }
-            } else if nodeName == "Clear Stats" {
+            }
+            else if nodeName == "Clear Stats" {
                 let confirmScene = ConfirmClearStatsScene(size: self.size, gameViewController: self.controller!)
-                confirmScene.scaleMode = .AspectFill
+                confirmScene.scaleMode = .aspectFill
                 self.view?.presentScene(confirmScene)
             }
         }

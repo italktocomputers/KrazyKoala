@@ -36,30 +36,9 @@ let antCategory: UInt32 = 0x1 << 4    // 16
 let rockCategory: UInt32 = 0x1 << 5   // 32
 let itemCategory: UInt32 = 0x1 << 6   // 64
 
-// Swift 2 Array Extension
-extension Array where Element: Equatable {
-    mutating func removeObject(object: Element) -> Bool {
-        if let index = self.indexOf(object) {
-            self.removeAtIndex(index)
-            return true
-        }
-        
-        return false
-    }
-    
-    mutating func removeObjectsInArray(array: [Element]) -> Bool {
-        for object in array {
-            self.removeObject(object)
-            return true
-        }
-        
-        return false
-    }
-}
-
 class GameScene: SKScene, SKPhysicsContactDelegate {
-    var gameStartTime = NSDate()
-    var gameOverTime = NSDate()
+    var gameStartTime = Date()
+    var gameOverTime = Date()
     var koala: Koala?
     var nodeQueue: [SKSpriteNode] = []
     var poofQueue: [SKSpriteNode] = []
@@ -69,7 +48,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var score = 0
     var antsKilled = 0
     var fliesKilled = 0
-    var pauseStartTime: NSDate?
+    var pauseStartTime: Date?
     var jumpWav = SKAction.playSoundFileNamed("jump.wav", waitForCompletion: false)
     var hitWav = SKAction.playSoundFileNamed("hit.wav", waitForCompletion: false)
     var gameOverWav = SKAction.playSoundFileNamed("game-over.wav", waitForCompletion: true)
@@ -104,13 +83,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var randIntervalToAddBlueRock: Double = 45.0
     var randIntervalToAddBomb: Double = 15.0
     
-    var lastTimeFlyAdded = NSDate()
-    var lastTimeAntAdded = NSDate()
-    var lastTimeRedRockAdded = NSDate()
-    var lastTimeBlueRockAdded = NSDate()
-    var lastTimeBombAdded = NSDate()
-    var lastTimeLevelAdjusted = NSDate()
-    var lastTimeKillQueue = NSDate()
+    var lastTimeFlyAdded = Date()
+    var lastTimeAntAdded = Date()
+    var lastTimeRedRockAdded = Date()
+    var lastTimeBlueRockAdded = Date()
+    var lastTimeBombAdded = Date()
+    var lastTimeLevelAdjusted = Date()
+    var lastTimeKillQueue = Date()
     
     var antDurationEasy = 5
     var antDurationHard = 5
@@ -128,12 +107,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var flyAnimationSpeedHard = 0.2
     var flyAnimationSpeedKrazy = 0.2
     
-    var lastTimeNodeJumped = NSDate()
+    var lastTimeNodeJumped = Date()
     var secsToWaitForJump: Double = 1.0
     
     var difficulty = ""
     
-    var lastKill: NSDate? = nil
+    var lastKill: Date? = nil
     var clearStreak = 0
     var gameHighclearStreak = 0
     
@@ -146,7 +125,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var highScore = 0
     var highclearStreak = 0
     
-    var lastTextBurst = NSDate()
+    var lastTextBurst = Date()
     var shownHighScoreBurst = false
     var shownHighclearStreakBurst = false
     
@@ -165,12 +144,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if self.difficulty == "Hard" {
             self.changeLevelEvery = 45.0
-        } else if self.difficulty == "Krazy" {
+        }
+        else if self.difficulty == "Krazy" {
             self.changeLevelEvery = 30.0
         }
         
         do {
-            try self.audioPlayer = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("beet", ofType: "wav")!), fileTypeHint: nil)
+            try self.audioPlayer = AVAudioPlayer(
+                contentsOf: NSURL(fileURLWithPath: Bundle.main.path(forResource: "beet", ofType: "wav")!) as URL,
+                fileTypeHint: nil
+            )
         } catch {
             print("Cannot play music!")
         }
@@ -183,19 +166,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func yOfGround() -> CGFloat {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 130
-        } else if self.view?.bounds.width == 480 {
+        }
+        else if self.view?.bounds.width == 480 {
             return 135
-        } else {
+        }
+        else {
             return 155
         }
     }
     
     func yOfTop() -> CGFloat {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 768
-        } else if self.view?.bounds.width == 480 {
+        }
+        else if self.view?.bounds.width == 480 {
             return 730
         }
         
@@ -213,11 +199,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func yPosOfMenuBar() -> CGFloat {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 728
-        } else if self.view?.bounds.width == 480 {
+        }
+        else if self.view?.bounds.width == 480 {
             return 690
-        } else {
+        }
+        else {
             return 625
         }
     }
@@ -240,7 +228,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Note: using the self.pause var seems to be unreliable
         // so a new var was created to keep track of game state.
         if (self.isGamePaused == true) {
-            self.paused = true
+            self.isPaused = true
         }
     }
     
@@ -253,36 +241,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    override func didMoveToView(view: SKView) {
-        NSNotificationCenter.defaultCenter().addObserver(
+    override func didMove(to view: SKView) {
+        NotificationCenter.default.addObserver(
             self,
             selector: "fromApplicationDidBecomeActive",
-            name: "fromApplicationDidBecomeActive",
-            object: nil)
+            name: NSNotification.Name(rawValue: "fromApplicationDidBecomeActive"),
+            object: nil
+        )
         
-        NSNotificationCenter.defaultCenter().addObserver(
+        NotificationCenter.default.addObserver(
             self,
             selector: "fromApplicationWillResignActive",
-            name: "fromApplicationWillResignActive",
-            object: nil)
+            name: NSNotification.Name(rawValue: "fromApplicationWillResignActive"),
+            object: nil
+        )
         
         self.koala = Koala(gameScene: self, difficulty: self.difficulty)
         
-        self.highScore = self.helpers.getHighScore(self.difficulty)
-        self.highclearStreak = self.helpers.getHighClearStreak(self.difficulty)
+        self.highScore = self.helpers.getHighScore(difficulty: self.difficulty)
+        self.highclearStreak = self.helpers.getHighClearStreak(difficulty: self.difficulty)
         
-        self.gameStartTime = NSDate()
+        self.gameStartTime = Date()
         
         // We need this so the iAd delegates knows when to show
         // iAd and when to not.
         self.controller.currentSceneName = "GameScene"
         
+        /*
         // If no error, we will try to display an ad, however, ...
         if self.controller.iAdError == false {
             // No iAd during game play unless on a pause.
-            self.controller.adBannerView!.hidden = true
+            self.controller.adBannerView!.isHidden = true
         }
-        
+        */
         // Game music
         if self.helpers.getMusicSetting() == true {
             self.isMusicEnabled = true
@@ -298,21 +289,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.loadBackground()
         self.addDifficultyLabel()
-        self.addScoreBoard(0)
-        self.addLifeBar(self.koala!.lives)
+        self.addScoreBoard(score: 0)
+        self.addLifeBar(numLives: self.koala!.lives)
         self.addRedRockIndicator()
-        self.updateRedRockIndicator(0)
+        self.updateRedRockIndicator(total: 0)
         self.addBlueRockIndicator()
-        self.updateBlueRockIndicator(0)
+        self.updateBlueRockIndicator(total: 0)
         self.addPauseButton()
     }
     
     func showclearStreakLabel() {
-        self.helpers.removeNodeByName(self, name: "clearStreakLabel")
+        self.helpers.removeNodeByName(scene: self, name: "clearStreakLabel")
         
         // Only show kill streak if 5 kills in a row or greater
         if self.clearStreak >= 5 {
-            self.addChild(self.helpers.createLabel(String(format: "Clear streak: %i", self.clearStreak), fontSize: 20, position: CGPointMake(self.xOfRight()-610, self.yPosOfMenuBar()-9), name: "clearStreakLabel", color: SKColor.whiteColor()))
+            self.addChild(
+                self.helpers.createLabel(
+                    text: String(format: "Clear streak: %i", self.clearStreak),
+                    fontSize: 20, position: CGPoint(x: self.xOfRight()-610, y: self.yPosOfMenuBar()-9),
+                    name: "clearStreakLabel",
+                    color: SKColor.white
+                )
+            )
             
             if self.clearStreak % 20 == 0 {
                 // For every 20 kills, show text letting them know
@@ -325,56 +323,95 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func addBlueRockIndicator() {
         let node = SKSpriteNode(imageNamed:"bluerock")
         node.zPosition = 1
-        node.position = CGPointMake(155, self.yPosOfMenuBar())
+        node.position = CGPoint(x: 155, y: self.yPosOfMenuBar())
         self.addChild(node)
     }
     
     func updateBlueRockIndicator(total: Int) {
-        self.helpers.removeNodeByName(self, name: "blueRockIndicator")
-        self.addChild(self.helpers.createLabel(String(format: "%i", total), fontSize: 20, position: CGPointMake(180, self.yPosOfMenuBar()-9), name: "blueRockIndicator", color: SKColor.whiteColor()))
+        self.helpers.removeNodeByName(scene: self, name: "blueRockIndicator")
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "%i", total),
+                fontSize: 20,
+                position: CGPoint(x: 180, y: self.yPosOfMenuBar()-9),
+                name: "blueRockIndicator",
+                color: SKColor.white
+            )
+        )
     }
     
     func addRedRockIndicator() {
         let node = SKSpriteNode(imageNamed:"redrock")
         node.zPosition = 1
-        node.position = CGPointMake(100, self.yPosOfMenuBar())
+        node.position = CGPoint(x: 100, y: self.yPosOfMenuBar())
         self.addChild(node)
     }
     
     func updateRedRockIndicator(total: Int) {
-        self.helpers.removeNodeByName(self, name: "redRockIndicator")
-        self.addChild(self.helpers.createLabel(String(format: "%i", total), fontSize: 20, position: CGPointMake(125, self.yPosOfMenuBar()-9), name: "redRockIndicator", color: SKColor.whiteColor()))
+        self.helpers.removeNodeByName(scene: self, name: "redRockIndicator")
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "%i", total),
+                fontSize: 20,
+                position: CGPoint(x: 125, y: self.yPosOfMenuBar()-9),
+                name: "redRockIndicator",
+                color: SKColor.white
+            )
+        )
     }
     
     func addScoreBoard(score: Int) {
         let node = SKSpriteNode(imageNamed:"PointsBar")
         node.zPosition = 1
-        node.position = CGPointMake(self.xOfRight()-100, self.yPosOfMenuBar())
+        node.position = CGPoint(x: self.xOfRight()-100, y: self.yPosOfMenuBar())
         self.addChild(node)
         
-        self.updateScoreBoard(score)
+        self.updateScoreBoard(score: score)
     }
     
     func updateScoreBoard(score: Int) {
-        self.helpers.removeNodeByName(self, name: "scoreBoardLabel")
+        self.helpers.removeNodeByName(scene: self, name: "scoreBoardLabel")
         
-        self.addChild(self.helpers.createLabel(String(format: "%06d", score), fontSize: 24, position: CGPointMake(self.xOfRight()-67, self.yPosOfMenuBar()-16), name: "scoreBoardLabel", color: SKColor.whiteColor()))
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "%06d", score),
+                fontSize: 24,
+                position: CGPoint(x: self.xOfRight()-67, y: self.yPosOfMenuBar()-16),
+                name: "scoreBoardLabel",
+                color: SKColor.white
+            )
+        )
     }
     
     func addDifficultyLabel() {
-        self.helpers.removeNodeByName(self, name: "difficultyLabel")
+        self.helpers.removeNodeByName(scene: self, name: "difficultyLabel")
         
-        self.addChild(self.helpers.createLabel(String(format: "Difficulty: %@", self.difficulty), fontSize: 20, position: CGPointMake(self.xOfRight()-405, self.yPosOfMenuBar()-9), name: "difficultyLabel", color: SKColor.whiteColor()))
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Difficulty: %@", self.difficulty),
+                fontSize: 20, position: CGPoint(x: self.xOfRight()-405, y: self.yPosOfMenuBar()-9),
+                name: "difficultyLabel",
+                color: SKColor.white
+            )
+        )
     }
     
     func addLifeBar(numLives: Int) {
-        self.helpers.removeNodeByName(self, name: "lifeBar")
-        self.addChild(self.helpers.createLabel(String(format: "Lives: %i", numLives), fontSize: 20, position: CGPointMake(self.xOfRight()-250, self.yPosOfMenuBar()-9), name: "lifeBar", color: SKColor.whiteColor()))
+        self.helpers.removeNodeByName(scene: self, name: "lifeBar")
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Lives: %i", numLives),
+                fontSize: 20,
+                position: CGPoint(x: self.xOfRight()-250, y: self.yPosOfMenuBar()-9),
+                name: "lifeBar",
+                color: SKColor.white
+            )
+        )
     }
     
     func addPauseButton() {
         let btn = SKSpriteNode(imageNamed:"Pausebtn")
-        btn.position = CGPointMake(40, self.yPosOfMenuBar())
+        btn.position = CGPoint(x: 40, y: self.yPosOfMenuBar())
         btn.zPosition = 4
         btn.name = name
         btn.xScale = 1
@@ -389,31 +426,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // while its ending and we also want to prevent an EXC_BAD_ACCESS
         // which is caused by this objects subscribers being deallocated
         // and then called from the app delegate.
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         
         self.isGameOver = true
-        self.gameOverTime = NSDate()
+        self.gameOverTime = Date()
         self.removeAllItems()
         self.audioPlayer.stop() // stop game music
         
         self.koala!.die()
         
         // Dim background
-        self.enumerateChildNodesWithName("background", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            let bg = node as! SKSpriteNode
-            let colorBlack = SKAction.colorizeWithColor(SKColor.blackColor(), colorBlendFactor: 0.7, duration: 2)
-            bg.runAction(SKAction.sequence([colorBlack]))
-        })
+        self.enumerateChildNodes(
+            withName: "background",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                let bg = node as! SKSpriteNode
+                let colorBlack = SKAction.colorize(with: SKColor.black, colorBlendFactor: 0.7, duration: 2)
+                bg.run(SKAction.sequence([colorBlack]))
+            }
+        )
         
         // Dim foreground
-        self.enumerateChildNodesWithName("background2", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            let bg = node as! SKSpriteNode
-            let colorBlack = SKAction.colorizeWithColor(SKColor.blackColor(), colorBlendFactor: 0.7, duration: 2)
-            bg.runAction(SKAction.sequence([colorBlack]))
-        })
+        self.enumerateChildNodes(
+            withName: "background2",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                let bg = node as! SKSpriteNode
+                let colorBlack = SKAction.colorize(with: SKColor.black, colorBlendFactor: 0.7, duration: 2)
+                bg.run(SKAction.sequence([colorBlack]))
+            }
+        )
         
         // Play game over sound
-        self.runAction(self.gameOverWav, completion: {()
+        self.run(self.gameOverWav, completion: {()
             // Show game over scene
             let gameOverScene = GameOverScene(size: self.size,
                                               gameViewController: self.controller,
@@ -424,13 +467,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                               difficulty: self.difficulty,
                                               level: self.level)
             
-            gameOverScene.scaleMode = .AspectFill
-            self.view?.presentScene(gameOverScene, transition: SKTransition.moveInWithDirection(SKTransitionDirection.Down, duration: 2))
+            gameOverScene.scaleMode = .aspectFill
+            self.view?.presentScene(gameOverScene, transition: SKTransition.moveIn(with: SKTransitionDirection.down, duration: 2))
         })
     }
     
     // Collision between nodes detected
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
          // I decided to keep the contact method in the scene and
          // not have one for each Entity for two reasons.  The
          // first reason has to do with code being executed in
@@ -449,7 +492,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if body1 is Koala {
                 _koala = body1 as? Koala
                 other = body2!
-            } else {
+            }
+            else {
                 _koala = body2 as? Koala
                 other = body1!
             }
@@ -457,31 +501,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Koala has contacted a red rock, blue rock or a bomb
             if other.name == "bluerock" || other.name == "redrock" || other.name == "bomb" {
                 // Play item pickup sound
-                self.runAction(self.energizeWav)
+                self.run(self.energizeWav)
                 
                 if other.name == "bluerock" {
                     _koala!.numBlueRocks = _koala!.numBlueRocks + 3
-                    self.updateBlueRockIndicator(_koala!.numBlueRocks)
-                } else if other.name == "redrock" {
+                    self.updateBlueRockIndicator(total: _koala!.numBlueRocks)
+                }
+                else if other.name == "redrock" {
                     _koala!.numRedRocks = _koala!.numRedRocks + 3
-                    self.updateRedRockIndicator(_koala!.numRedRocks)
-                } else if other.name == "bomb" {
+                    self.updateRedRockIndicator(total: _koala!.numRedRocks)
+                }
+                else if other.name == "bomb" {
                     self.killAllBadGuys()
                 }
                 
                 other.removeFromParent()
-            } else if other.name == "ground" {
+            }
+            else if other.name == "ground" {
                 _koala!.walk()
-            } else if other.name == "fly" {
+            }
+            else if other.name == "fly" {
                 _koala!.takeHit()
-                self.addLifeBar(_koala!.lives)
-            } else if other.name == "ant" {
-                if _koala!.physicsBody?.velocity.dy < 0 {
+                self.addLifeBar(numLives: _koala!.lives)
+            }
+            else if other.name == "ant" {
+                if (_koala!.physicsBody?.velocity.dy)! < CGFloat(0.0) {
                     _koala!.applyBounce() // jumped on top of ant so koala will bounce
                     //self.applyBlackAntStompAchievement()
-                } else {
+                }
+                else {
                     _koala!.takeHit()
-                    _koala!.gameScene.addLifeBar(_koala!.lives)
+                    _koala!.gameScene.addLifeBar(numLives: _koala!.lives)
                 }
             }
         }
@@ -494,7 +544,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if body1 is Fly {
                 _fly = body1 as? Fly
                 other = body2!
-            } else {
+            }
+            else {
                 _fly = body2 as? Fly
                 other = body1!
             }
@@ -512,7 +563,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if body1 is Ant {
                 _ant = body1 as? Ant
                 other = body2!
-            } else {
+            }
+            else {
                 _ant = body2 as? Ant
                 other = body1!
             }
@@ -530,7 +582,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if body1 is Rock {
                 _rock = body1 as? Rock
                 other = body2!
-            } else {
+            }
+            else {
                 _rock = body2 as? Rock
                 other = body1!
             }
@@ -574,7 +627,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if node.name == "ant" || node.name == "fly" {
                 node.physicsBody?.contactTestBitMask = 0 // They can't hurt you anymore!
                 self.killQueue.append(node)
-                x++
+                x+=1
             }
         }
         
@@ -601,11 +654,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func removeAllItems() {
         for node in self.nodeQueue {
             let sknode = node as SKSpriteNode
-            if sknode.name == "ant" ||
-                sknode.name == "fly" ||
-                sknode.name == "bomb" ||
-                sknode.name == "bluerock" ||
-                sknode.name == "redrock" {
+            if sknode.name == "ant" || sknode.name == "fly" || sknode.name == "bomb" ||
+                sknode.name == "bluerock" || sknode.name == "redrock" {
                 sknode.removeFromParent()
             }
         }
@@ -614,15 +664,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func addPoof(loc: CGPoint, playSound: Bool=true) {
         var ok = true
         
-        self.enumerateChildNodesWithName("poof", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if node.position == loc {
-                ok = false // No need to add a poof to the same location
+        self.enumerateChildNodes(
+            withName: "poof",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                if node.position == loc {
+                    ok = false // No need to add a poof to the same location
+                }
             }
-        })
+        )
         
         if ok {
             if playSound == true {
-                self.runAction(self.poofWav)
+                self.run(self.poofWav)
             }
             
             let node = SKSpriteNode(imageNamed:"poof1_white")
@@ -636,13 +689,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let image4 = SKTexture(imageNamed: "poof4_white")
             let image5 = SKTexture(imageNamed: "poof5_white")
             let removeNode = SKAction.removeFromParent()
-            let images = SKAction.animateWithTextures([image1, image2, image3, image4, image5], timePerFrame: 0.2)
+            let images = SKAction.animate(with: [image1, image2, image3, image4, image5], timePerFrame: 0.2)
             
-            let deQueue = SKAction.runBlock({()
-                self.poofQueue.removeObject(node)
+            let deQueue = SKAction.run({()
+                let index = self.poofQueue.index(of: node)
+                self.poofQueue.remove(at: index!)
             })
             
-            node.runAction(SKAction.repeatActionForever(SKAction.sequence([images, deQueue, removeNode])))
+            node.run(SKAction.repeatForever(SKAction.sequence([images, deQueue, removeNode])))
             
             self.addChild(node)
             self.poofQueue.append(node)
@@ -650,12 +704,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // User tapped the screen
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         var nodeName: String = ""
         
         for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            let node = self.nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let node = self.atPoint(location)
             
             if node.name != nil {
                 nodeName = node.name!
@@ -664,23 +718,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if nodeName == "Pause" || nodeName == "PlayBtnFromDialog" {
             if self.isGameOver == false {
-                if self.paused == true {
+                if self.isPaused == true {
                     self.cancelPause()
-                } else {
+                }
+                else {
                     self.pause()
                 }
             }
-        } else if nodeName == "ReloadBtnFromDialog" && self.isGameOver == false {
+        }
+        else if nodeName == "ReloadBtnFromDialog" && self.isGameOver == false {
             // Go to main menu
             self.audioPlayer.stop()
             let startScene = StartScene(size: self.size, gameViewController: self.controller)
-            startScene.scaleMode = .AspectFill
+            startScene.scaleMode = .aspectFill
             self.view?.presentScene(startScene)
-        } else {
-            if self.paused != true && self.isGameOver != true {
-                if self.koala?.position.y >= 206 && self.koala?.position.y <= 209 {
+        }
+        else {
+            if self.isPaused != true && self.isGameOver != true {
+                if (self.koala?.position.y)! >= CGFloat(206) && (self.koala?.position.y)! <= CGFloat(209) {
                     self.koala!.jump() // jump
-                } else {
+                }
+                else {
                     // If koala is in the air and a touch is received, throw a rock
                     // instead of jumping (if they are allowed to throw a rock)
                     self.koala!.throwRock()
@@ -690,11 +748,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func pause(keepTime:Bool=false) {
-        self.paused = true
+        self.isPaused = true
         self.isGamePaused = true
         
         if keepTime == false {
-            self.pauseStartTime = NSDate()
+            self.pauseStartTime = Date()
         }
         
         if self.isMusicEnabled == true {
@@ -704,7 +762,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let panel = SKSpriteNode(imageNamed:"Panel3")
         panel.xScale = 1.1
         panel.yScale = 1.1
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         panel.zPosition = 102
         panel.name = "pauseDialog"
         self.addChild(panel)
@@ -712,19 +770,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let ribbon = SKSpriteNode(imageNamed:"PausedRibbon")
         ribbon.xScale = 1.1
         ribbon.yScale = 1.1
-        ribbon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+80)
+        ribbon.position = CGPoint(x: self.frame.midX, y: self.frame.midY+80)
         ribbon.zPosition = 103
         ribbon.name = "pauseDialog"
         self.addChild(ribbon)
         
         let accept = SKSpriteNode(imageNamed:"Reloadbtn")
-        accept.position = CGPointMake(CGRectGetMidX(self.frame)-100, CGRectGetMidY(self.frame))
+        accept.position = CGPoint(x: self.frame.midX-100, y: self.frame.midY)
         accept.zPosition = 103
         accept.name = "ReloadBtnFromDialog"
         self.addChild(accept)
         
         let warning = SKSpriteNode(imageNamed:"Playbtn")
-        warning.position = CGPointMake(CGRectGetMidX(self.frame)+100, CGRectGetMidY(self.frame))
+        warning.position = CGPoint(x: self.frame.midX+100, y: self.frame.midY)
         warning.zPosition = 103
         warning.name = "PlayBtnFromDialog"
         warning.xScale = 0.7
@@ -732,14 +790,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(warning)
         
         // show ad
-        self.controller.adBannerView!.hidden = false
+        //self.controller.adBannerView!.isHidden = false
     }
     
     func cancelPause() {
-        self.paused = false
+        self.isPaused = false
         self.isGamePaused = false
         
-        let now = NSDate()
+        let now = Date()
         
         if self.isMusicEnabled == true {
             self.audioPlayer.play()
@@ -751,42 +809,91 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // we cannot allow that...
         
         if self.pauseStartTime != nil {
-            let pauseIntervalForAnt = Double(self.lastTimeAntAdded.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForBomb = Double(self.lastTimeBombAdded.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForRedRock = Double(self.lastTimeRedRockAdded.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForBlueRock = Double(self.lastTimeBlueRockAdded.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForFly = Double(self.lastTimeFlyAdded.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForNodeJump = Double(self.lastTimeNodeJumped.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForLastTextBurst = Double(self.lastTextBurst.timeIntervalSinceDate(pauseStartTime!))
-            let pauseIntervalForlevel = Double(self.lastTimeLevelAdjusted.timeIntervalSinceDate(pauseStartTime!))
+            let pauseIntervalForAnt = Double(
+                self.lastTimeAntAdded.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForBomb = Double(
+                self.lastTimeBombAdded.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForRedRock = Double(
+                self.lastTimeRedRockAdded.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForBlueRock = Double(
+                self.lastTimeBlueRockAdded.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForFly = Double(
+                self.lastTimeFlyAdded.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForNodeJump = Double(
+                self.lastTimeNodeJumped.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForLastTextBurst = Double(
+                self.lastTextBurst.timeIntervalSince(pauseStartTime!)
+            )
+            let pauseIntervalForlevel = Double(
+                self.lastTimeLevelAdjusted.timeIntervalSince(pauseStartTime!)
+            )
             
-            self.lastTimeAntAdded = NSDate(timeInterval: NSTimeInterval(pauseIntervalForAnt), sinceDate: now)
-            self.lastTimeBombAdded = NSDate(timeInterval: NSTimeInterval(pauseIntervalForBomb), sinceDate: now)
-            self.lastTimeRedRockAdded = NSDate(timeInterval: NSTimeInterval(pauseIntervalForRedRock), sinceDate: now)
-            self.lastTimeBlueRockAdded = NSDate(timeInterval: NSTimeInterval(pauseIntervalForBlueRock), sinceDate: now)
-            self.lastTimeFlyAdded = NSDate(timeInterval: NSTimeInterval(pauseIntervalForFly), sinceDate: now)
-            self.lastTimeNodeJumped = NSDate(timeInterval: NSTimeInterval(pauseIntervalForNodeJump), sinceDate: now)
-            self.lastTextBurst = NSDate(timeInterval: NSTimeInterval(pauseIntervalForLastTextBurst), sinceDate: now)
-            self.lastTimeLevelAdjusted = NSDate(timeInterval: NSTimeInterval(pauseIntervalForlevel), sinceDate: now)
+            self.lastTimeAntAdded = Date(
+                timeInterval: TimeInterval(pauseIntervalForAnt),
+                since: now
+            )
+            self.lastTimeBombAdded = Date(
+                timeInterval: TimeInterval(pauseIntervalForBomb),
+                since: now
+            )
+            self.lastTimeRedRockAdded = Date(
+                timeInterval: TimeInterval(pauseIntervalForRedRock),
+                since: now
+            )
+            self.lastTimeBlueRockAdded = Date(
+                timeInterval: TimeInterval(pauseIntervalForBlueRock),
+                since: now
+            )
+            self.lastTimeFlyAdded = Date(
+                timeInterval: TimeInterval(pauseIntervalForFly),
+                since: now
+            )
+            self.lastTimeNodeJumped = Date(
+                timeInterval: TimeInterval(pauseIntervalForNodeJump),
+                since: now
+            )
+            self.lastTextBurst = Date(
+                timeInterval: TimeInterval(pauseIntervalForLastTextBurst),
+                since: now
+            )
+            self.lastTimeLevelAdjusted = Date(
+                timeInterval: TimeInterval(pauseIntervalForlevel),
+                since: now
+            )
         }
         
         self.pauseStartTime = nil
         
         // Remove dialog items
-        self.enumerateChildNodesWithName("pauseDialog", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            node.removeFromParent()
-        })
+        self.enumerateChildNodes(
+            withName: "pauseDialog",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                node.removeFromParent()
+            }
+        )
         
-        self.enumerateChildNodesWithName("PlayBtnFromDialog", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            node.removeFromParent()
-        })
+        self.enumerateChildNodes(
+            withName: "PlayBtnFromDialog",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                node.removeFromParent()
+            }
+        )
         
-        self.enumerateChildNodesWithName("ReloadBtnFromDialog", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            node.removeFromParent()
-        })
+        self.enumerateChildNodes(
+            withName: "ReloadBtnFromDialog",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                node.removeFromParent()
+            }
+        )
         
         // Hide ad
-        self.controller.adBannerView!.hidden = true
+        //self.controller.adBannerView!.isHidden = true
     }
     
     func randRange (lower: UInt32 , upper: UInt32) -> UInt32 {
@@ -794,13 +901,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func addItemsToScene() {
-        let now = NSDate()
+        let now = Date()
         
-        let intervalForAnt = Double(now.timeIntervalSinceDate(self.lastTimeAntAdded))
-        let intervalForFly = Double(now.timeIntervalSinceDate(self.lastTimeFlyAdded))
-        let intervalForRedRock = Double(now.timeIntervalSinceDate(self.lastTimeRedRockAdded))
-        let intervalForBlueRock = Double(now.timeIntervalSinceDate(self.lastTimeBlueRockAdded))
-        let intervalForBomb = Double(now.timeIntervalSinceDate(self.lastTimeBombAdded))
+        let intervalForAnt = Double(now.timeIntervalSince(self.lastTimeAntAdded))
+        let intervalForFly = Double(now.timeIntervalSince(self.lastTimeFlyAdded))
+        let intervalForRedRock = Double(now.timeIntervalSince(self.lastTimeRedRockAdded))
+        let intervalForBlueRock = Double(now.timeIntervalSince(self.lastTimeBlueRockAdded))
+        let intervalForBomb = Double(now.timeIntervalSince(self.lastTimeBombAdded))
         
         if intervalForAnt >= self.randIntervalToAddAnt && self.killQueue.count == 0 {
             let ant = Ant(gameScene: self, difficulty: self.difficulty)
@@ -810,15 +917,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             var newInterval: Double = 0.0
             
             if self.difficulty == "Hard" {
-                newInterval = Double(self.randRange(UInt32(self.minIntervalToAddAntHard), upper: UInt32(self.maxIntervalToAddAntHard)))
-            } else if self.difficulty == "Krazy" {
-                newInterval = Double(self.randRange(UInt32(self.minIntervalToAddAntKrazy), upper: UInt32(self.maxIntervalToAddAntKrazy)))
-            } else {
-                newInterval = Double(self.randRange(UInt32(self.minIntervalToAddAntEasy), upper: UInt32(self.maxIntervalToAddAntEasy)))
+                newInterval = Double(
+                    self.randRange(
+                        lower: UInt32(self.minIntervalToAddAntHard),
+                        upper: UInt32(self.maxIntervalToAddAntHard)
+                    )
+                )
+            }
+            else if self.difficulty == "Krazy" {
+                newInterval = Double(
+                    self.randRange(
+                        lower: UInt32(self.minIntervalToAddAntKrazy),
+                        upper: UInt32(self.maxIntervalToAddAntKrazy)
+                    )
+                )
+            }
+            else {
+                newInterval = Double(
+                    self.randRange(
+                        lower: UInt32(self.minIntervalToAddAntEasy),
+                        upper: UInt32(self.maxIntervalToAddAntEasy)
+                    )
+                )
             }
             
             self.randIntervalToAddAnt = Double(newInterval)
-            self.lastTimeAntAdded = NSDate()
+            self.lastTimeAntAdded = Date()
         }
         
         if intervalForFly >= self.randIntervalToAddFly && self.killQueue.count == 0 {
@@ -831,25 +955,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if self.difficulty == "Hard" {
                 if self.minIntervalToAddFlyHard == self.maxIntervalToAddFlyHard {
                     newInterval = self.minIntervalToAddFlyHard
-                } else {
-                    newInterval = Double(self.randRange(UInt32(self.minIntervalToAddFlyHard), upper: UInt32(self.maxIntervalToAddFlyHard)))
                 }
-            } else if self.difficulty == "Krazy" {
+                else {
+                    newInterval = Double(
+                        self.randRange(
+                            lower: UInt32(self.minIntervalToAddFlyHard),
+                            upper: UInt32(self.maxIntervalToAddFlyHard)
+                        )
+                    )
+                }
+            }
+            else if self.difficulty == "Krazy" {
                 if self.minIntervalToAddFlyKrazy == self.maxIntervalToAddFlyKrazy {
                     newInterval = self.minIntervalToAddFlyKrazy
-                } else {
-                    newInterval = Double(self.randRange(UInt32(self.minIntervalToAddFlyKrazy), upper: UInt32(self.maxIntervalToAddFlyKrazy)))
                 }
-            } else {
+                else {
+                    newInterval = Double(
+                        self.randRange(
+                            lower: UInt32(self.minIntervalToAddFlyKrazy),
+                            upper: UInt32(self.maxIntervalToAddFlyKrazy)
+                        )
+                    )
+                }
+            }
+            else {
                 if self.minIntervalToAddFlyEasy == self.maxIntervalToAddFlyEasy {
                     newInterval = self.minIntervalToAddFlyEasy
-                } else {
-                    newInterval = Double(self.randRange(UInt32(self.minIntervalToAddFlyEasy), upper: UInt32(self.maxIntervalToAddFlyEasy)))
+                }
+                else {
+                    newInterval = Double(
+                        self.randRange(
+                            lower: UInt32(self.minIntervalToAddFlyEasy),
+                            upper: UInt32(self.maxIntervalToAddFlyEasy)
+                        )
+                    )
                 }
             }
             
             self.randIntervalToAddFly = newInterval
-            self.lastTimeFlyAdded = NSDate()
+            self.lastTimeFlyAdded = Date()
         }
         
         if intervalForRedRock >= self.randIntervalToAddRedRock {
@@ -858,9 +1002,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.nodeQueue.append(rock)
             
             // Remember last time we did this so we only do it so often
-            let newInterval = self.randRange(UInt32(self.minIntervalToAddRedRock), upper: UInt32(self.maxIntervalToAddRedRock))
+            let newInterval = self.randRange(
+                lower: UInt32(self.minIntervalToAddRedRock),
+                upper: UInt32(self.maxIntervalToAddRedRock)
+            )
             self.randIntervalToAddRedRock = Double(newInterval)
-            self.lastTimeRedRockAdded = NSDate()
+            self.lastTimeRedRockAdded = Date()
 
         }
         
@@ -870,9 +1017,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.nodeQueue.append(rock)
             
             // Remember last time we did this so we only do it so often
-            let newInterval = self.randRange(UInt32(self.minIntervalToAddBlueRock), upper: UInt32(self.maxIntervalToAddBlueRock))
+            let newInterval = self.randRange(
+                lower: UInt32(self.minIntervalToAddBlueRock),
+                upper: UInt32(self.maxIntervalToAddBlueRock)
+            )
             self.randIntervalToAddBlueRock = Double(newInterval)
-            self.lastTimeBlueRockAdded = NSDate()
+            self.lastTimeBlueRockAdded = Date()
         }
         
         if intervalForBomb >= self.randIntervalToAddBomb {
@@ -881,9 +1031,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.nodeQueue.append(bomb)
             
             // Remember last time we did this so we only do it so often
-            let newInterval = self.randRange(UInt32(self.minIntervalToAddBomb), upper: UInt32(self.maxIntervalToAddBomb))
+            let newInterval = self.randRange(
+                lower: UInt32(self.minIntervalToAddBomb),
+                upper: UInt32(self.maxIntervalToAddBomb)
+            )
             self.randIntervalToAddBomb = Double(newInterval)
-            self.lastTimeBombAdded = NSDate()
+            self.lastTimeBombAdded = Date()
         }
     }
     
@@ -893,9 +1046,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // move it to the back so to create an endless moving background.
         for i in 0...3 {
             var bg = SKSpriteNode()
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            if UIDevice.current.userInterfaceIdiom == .pad {
                 bg = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1280x800")
-            } else {
+            }
+            else {
                 bg = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_1920x640")
             }
             
@@ -904,7 +1058,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 bg.xScale = 1.1
             }
             
-            bg.position = CGPointMake(CGFloat(i * Int(bg.size.width)), self.size.height/2)
+            bg.position = CGPoint(x: CGFloat(i * Int(bg.size.width)), y: self.size.height/2)
             bg.name = "background";
             self.addChild(bg)
         }
@@ -912,12 +1066,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Foreground
         for i in 0...3 {
             var bg = SKSpriteNode()
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad || self.view?.bounds.width == 480 {
+            if UIDevice.current.userInterfaceIdiom == .pad || self.view?.bounds.width == 480 {
                 bg = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_ground_1280x800")
-                bg.position = CGPointMake(CGFloat(i * Int(bg.size.width)), 75)
-            } else {
+                bg.position = CGPoint(x: CGFloat(i * Int(bg.size.width)), y: 75)
+            }
+            else {
                 bg = SKSpriteNode(imageNamed:"BG_Jungle_hor_rpt_ground_1920x640")
-                bg.position = CGPointMake(CGFloat(i * Int(bg.size.width)), 120)
+                bg.position = CGPoint(x: CGFloat(i * Int(bg.size.width)), y: 120)
             }
             
             bg.name = "background2";
@@ -927,20 +1082,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Add invisible barrier so our nodes don't go too high
         let topBody = SKNode()
-        topBody.physicsBody = SKPhysicsBody(edgeFromPoint: CGPoint(x: 0,y: CGFloat(self.yOfTop())+150), toPoint: CGPoint(x: self.xOfRight(), y: CGFloat(self.yOfTop())+150))
+        topBody.physicsBody = SKPhysicsBody(
+            edgeFrom: CGPoint(x: 0,y: CGFloat(self.yOfTop())+150),
+            to: CGPoint(x: self.xOfRight(), y: CGFloat(self.yOfTop())+150)
+        )
         
         topBody.physicsBody?.restitution = 0
         topBody.physicsBody?.categoryBitMask = groundCategory
-        topBody.physicsBody?.dynamic = false
+        topBody.physicsBody?.isDynamic = false
         self.addChild(topBody)
         
         // Add invisible barrier so our nodes don't fall through
         let groundBody = SKNode()
-        groundBody.physicsBody = SKPhysicsBody(edgeFromPoint: CGPoint(x: 0,y: self.yOfGround()), toPoint: CGPoint(x: self.xOfRight(), y: self.yOfGround()))
+        groundBody.physicsBody = SKPhysicsBody(
+            edgeFrom: CGPoint(x: 0,y: self.yOfGround()),
+            to: CGPoint(x: self.xOfRight(), y: self.yOfGround())
+        )
         
         groundBody.physicsBody?.restitution = 0
         groundBody.physicsBody?.categoryBitMask = groundCategory
-        groundBody.physicsBody?.dynamic = false
+        groundBody.physicsBody?.isDynamic = false
         groundBody.name = "ground"
         self.addChild(groundBody)
     }
@@ -948,20 +1109,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func showTextBurst(text: String) {
         let panel = SKSpriteNode(imageNamed:"jumbotron")
         
-        panel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)+180)
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY+180)
         panel.zPosition = 9
         panel.name = "jumbotron"
         panel.alpha = 0.5
         self.addChild(panel)
         
         var size = CGFloat(20.0)
-        if text.characters.count >= 20 {
+        if text.count >= 20 {
             size = CGFloat(16.0)
         }
         
-        self.addChild(self.helpers.createLabel(text, fontSize: size, position: CGPointMake(CGRectGetMidX(panel.frame), CGRectGetMidY(panel.frame)-7), name: "jumbotron", color: SKColor.whiteColor()))
+        self.addChild(
+            self.helpers.createLabel(
+                text: text,
+                fontSize: size,
+                position: CGPoint(x: panel.frame.midX, y: panel.frame.midY-7),
+                name: "jumbotron",
+                color: SKColor.white
+            )
+        )
         
-        self.lastTextBurst = NSDate()
+        self.lastTextBurst = Date()
     }
     
     /*
@@ -994,8 +1163,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     */
     
     func checkForNewClearStreak() {
-        let now = NSDate()
-        let intervalForTextBurst = now.timeIntervalSinceDate(self.lastTextBurst)
+        let now = Date()
+        let intervalForTextBurst = now.timeIntervalSince(self.lastTextBurst)
         
         if self.shownHighclearStreakBurst == false && self.highclearStreak >= 1 && intervalForTextBurst >= 2 {
             if self.clearStreak > self.highclearStreak {
@@ -1006,8 +1175,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func checkForNewHighScore() {
-        let now = NSDate()
-        let intervalForTextBurst = now.timeIntervalSinceDate(self.lastTextBurst)
+        let now = Date()
+        let intervalForTextBurst = now.timeIntervalSince(self.lastTextBurst)
         
         if self.shownHighScoreBurst == false && self.highScore >= 1 && intervalForTextBurst >= 2 {
             if self.score > self.highScore {
@@ -1019,18 +1188,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func checkForlevel() {
-        let now = NSDate()
-        let intervalForlevel = now.timeIntervalSinceDate(self.lastTimeLevelAdjusted)
+        let now = Date()
+        let intervalForlevel = now.timeIntervalSince(self.lastTimeLevelAdjusted)
         
         if intervalForlevel >= self.changeLevelEvery {
-            self.lastTimeLevelAdjusted = NSDate()
+            self.lastTimeLevelAdjusted = Date()
             self.level = self.level + 1
             self.addDifficultyLabel() // Update difficulty label
-            self.addLifeBar(++self.koala!.lives) // Add life for every difficulty adjustment
+            self.koala!.lives+=1
+            self.addLifeBar(numLives: self.koala!.lives) // Add life for every difficulty adjustment
             
             if self.difficulty == "Easy" {
-                self.minIntervalToAddFlyEasy--
-                self.maxIntervalToAddFlyEasy--
+                self.minIntervalToAddFlyEasy-=1
+                self.maxIntervalToAddFlyEasy-=1
                 
                 if self.minIntervalToAddFlyEasy < 1 {
                     self.minIntervalToAddFlyEasy = 0.5
@@ -1039,9 +1209,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if self.maxIntervalToAddFlyEasy < 1 {
                     self.maxIntervalToAddFlyEasy = 0.5
                 }
-            } else if self.difficulty == "Hard" {
-                self.minIntervalToAddFlyHard--
-                self.maxIntervalToAddFlyHard--
+            }
+            else if self.difficulty == "Hard" {
+                self.minIntervalToAddFlyHard-=1
+                self.maxIntervalToAddFlyHard-=1
                 
                 if self.minIntervalToAddFlyHard < 1 {
                     self.minIntervalToAddFlyHard = 0.5
@@ -1050,9 +1221,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if self.maxIntervalToAddFlyHard < 1 {
                     self.maxIntervalToAddFlyHard = 0.5
                 }
-            } else {
-                self.minIntervalToAddFlyKrazy--
-                self.maxIntervalToAddFlyKrazy--
+            }
+            else {
+                self.minIntervalToAddFlyKrazy-=1
+                self.maxIntervalToAddFlyKrazy-=1
                 
                 if self.minIntervalToAddFlyKrazy < 1 {
                     self.minIntervalToAddFlyKrazy = 0.5
@@ -1070,24 +1242,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let sknode = self.killQueue[0] as! Entity
             sknode.kill()
             
-            self.killQueue.removeAtIndex(0)
-            self.lastTimeKillQueue = NSDate()
+            self.killQueue.remove(at: 0)
+            self.lastTimeKillQueue = Date()
         }
     }
     
     func checkTextBurstQueue() {
-        let now = NSDate()
-        let intervalForTextBurst = now.timeIntervalSinceDate(self.lastTextBurst)
+        let now = Date()
+        let intervalForTextBurst = now.timeIntervalSince(self.lastTextBurst)
         
         if intervalForTextBurst >= 2 {
             // remove old
-            self.enumerateChildNodesWithName("jumbotron", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+            self.enumerateChildNodes(
+                withName: "jumbotron",
+                using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                     node.removeFromParent()
-                })
+                }
+            )
             
             if self.textBurstQueue.count > 0 {
-                self.showTextBurst(self.textBurstQueue[0])
-                self.textBurstQueue.removeAtIndex(0)
+                self.showTextBurst(text: self.textBurstQueue[0])
+                self.textBurstQueue.remove(at: 0)
             }
         }
     }
@@ -1095,56 +1270,65 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func moveBackground() {
         // Loop through our background images, moving each one 5 points to the left.
         // If one image reaches the end of the scene, we will place it in the back.
-        self.enumerateChildNodesWithName("background", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            let bg = node as! SKSpriteNode
-            // Move background to the left x points
-            bg.position = CGPointMake(bg.position.x - CGFloat(self.backgroundSpeed), bg.position.y)
-            
-            // If background has moved out of scene, move it to the end
-            if bg.position.x <= -bg.size.width {
-                bg.position = CGPointMake(bg.position.x + bg.size.width * 3, bg.position.y)
+        self.enumerateChildNodes(
+            withName: "background",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                let bg = node as! SKSpriteNode
+                // Move background to the left x points
+                bg.position = CGPoint(x: bg.position.x - CGFloat(self.backgroundSpeed), y: bg.position.y)
+                
+                // If background has moved out of scene, move it to the end
+                if bg.position.x <= -bg.size.width {
+                    bg.position = CGPoint(x: bg.position.x + bg.size.width * 3, y: bg.position.y)
+                }
             }
-        })
+        )
     }
     
     func moveForeground() {
-        self.enumerateChildNodesWithName("background2", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            let bg = node as! SKSpriteNode
-            // Move background to the left x points
-            bg.position = CGPointMake(bg.position.x - CGFloat(self.foregroundSpeed), bg.position.y)
-            
-            // If background has moved out of scene, move it to the end
-            if bg.position.x <= -bg.size.width {
-                bg.position = CGPointMake(bg.position.x + bg.size.width * 3, bg.position.y)
+        self.enumerateChildNodes(
+            withName: "background2",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                let bg = node as! SKSpriteNode
+                // Move background to the left x points
+                bg.position = CGPoint(x: bg.position.x - CGFloat(self.foregroundSpeed), y: bg.position.y)
+                
+                // If background has moved out of scene, move it to the end
+                if bg.position.x <= -bg.size.width {
+                    bg.position = CGPoint(x: bg.position.x + bg.size.width * 3, y: bg.position.y)
+                }
             }
-        })
+        )
     }
     
     func moveItemsAlongForeground() {
-        self.enumerateChildNodesWithName("poof", usingBlock: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
-            let poof = node as! SKSpriteNode
-            // Move poof to the left x points
-            poof.position = CGPointMake(poof.position.x - CGFloat(self.foregroundSpeed), poof.position.y)
-        })
+        self.enumerateChildNodes(
+            withName: "poof",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                let poof = node as! SKSpriteNode
+                // Move poof to the left x points
+                poof.position = CGPoint(x: poof.position.x - CGFloat(self.foregroundSpeed), y: poof.position.y)
+            }
+        )
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: CFTimeInterval) {
         if self.isGamePaused == true {
             // Not sure why I need to do this but if the user hits the home
             // button and it's longer than a couple of minutes before they
             // return, iOS will play the game even though it should be paused.
-            self.paused = true
+            self.isPaused = true
         }
         
         if self.isGamePaused == false && self.isGameOver == false {
-            self.koala!.update(currentTime)
+            self.koala!.update(currentTime: currentTime)
             
             // For each entity in the scene, execute their
             // update method so they can do what they need
             // to do during this frame cycle.
             for node in self.nodeQueue {
                 let entity = node as! Entity
-                entity.update(currentTime)
+                entity.update(currentTime: currentTime)
             }
             
             self.moveBackground()

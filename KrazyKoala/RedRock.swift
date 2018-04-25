@@ -32,12 +32,12 @@ class RedRock : Entity {
         self.gameScene = gameScene
         
         let texture = SKTexture(imageNamed: "redrock")
-        super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         self.position = pointStart
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: self.size.width, height: self.size.height))
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
         self.physicsBody?.restitution = 0
-        self.physicsBody?.dynamic = true
+        self.physicsBody?.isDynamic = true
         self.physicsBody?.categoryBitMask = rockCategory
         self.physicsBody?.contactTestBitMask = flyCategory | antCategory
         self.physicsBody?.collisionBitMask = 0
@@ -45,10 +45,10 @@ class RedRock : Entity {
         self.name = "redrock"
         self.zPosition = 101
         
-        let move = SKAction.moveTo(pointEnd, duration: NSTimeInterval(1))
+        let move = SKAction.move(to: pointEnd, duration: TimeInterval(1))
         let removeNode = SKAction.removeFromParent()
         
-        self.runAction(SKAction.repeatActionForever(SKAction.sequence([move, removeNode])))
+        self.run(SKAction.repeatForever(SKAction.sequence([move, removeNode])))
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -56,11 +56,12 @@ class RedRock : Entity {
     }
     
     override func update(currentTime: CFTimeInterval) {
-        self.position = CGPointMake(self.position.x - CGFloat(self.gameScene.foregroundSpeed), self.position.y)
+        self.position = CGPoint(x: self.position.x - CGFloat(self.gameScene.foregroundSpeed), y: self.position.y)
         
         if self.position.x <= -200 {
             self.removeFromParent()
-            self.gameScene.nodeQueue.removeObject(self)
+            let index = self.gameScene.nodeQueue.index(of: self)
+            self.gameScene.nodeQueue.remove(at: index!)
         }
     }
 }

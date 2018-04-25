@@ -34,14 +34,17 @@ class BlueRockItem : Entity {
         self.difficulty = difficulty
         
         let texture = SKTexture(imageNamed: "bluerocks")
-        super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
-        let randomY = self.gameScene.randRange(UInt32(self.gameScene.yOfGround()+100), upper: UInt32(self.gameScene.yMaxPlacementOfItem()))
+        let randomY = self.gameScene.randRange(
+            lower: UInt32(self.gameScene.yOfGround()+100),
+            upper: UInt32(self.gameScene.yMaxPlacementOfItem())
+        )
         
         self.position = CGPoint(x: self.gameScene.xOfRight(), y: CGFloat(randomY))
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: self.size.width, height: self.size.height))
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
         self.physicsBody?.restitution = 0
-        self.physicsBody?.dynamic = false
+        self.physicsBody?.isDynamic = false
         self.physicsBody?.categoryBitMask = itemCategory
         self.physicsBody?.contactTestBitMask = koalaCategory
         self.physicsBody?.collisionBitMask = 0
@@ -51,9 +54,9 @@ class BlueRockItem : Entity {
         // blink so user notices it
         let blink1 = SKTexture(imageNamed: "bluerocks")
         let blink2 = SKTexture(imageNamed: "rocks")
-        let blinks = SKAction.animateWithTextures([blink1, blink2], timePerFrame: 0.4)
+        let blinks = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
         
-        self.runAction(SKAction.repeatActionForever(blinks), withKey:"move")
+        self.run(SKAction.repeatForever(blinks), withKey:"move")
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -61,10 +64,11 @@ class BlueRockItem : Entity {
     }
     
     override func update(currentTime: CFTimeInterval) {
-        self.position = CGPointMake(self.position.x - CGFloat(self.gameScene.foregroundSpeed), self.position.y)
+        self.position = CGPoint(x: self.position.x - CGFloat(self.gameScene.foregroundSpeed), y: self.position.y)
         if self.position.x <= -200 {
             self.removeFromParent()
-            self.gameScene.nodeQueue.removeObject(self)
+            let index = self.gameScene.nodeQueue.index(of: self)
+            self.gameScene.nodeQueue.remove(at: index!)
         }
     }
 }

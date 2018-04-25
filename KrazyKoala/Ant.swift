@@ -37,7 +37,7 @@ class Ant: Entity {
         self.gameCenter = GameCenterController()
         self.helpers = Helpers()
         
-        let antTypeInt = Double(self.gameScene.randRange(0, upper: 1))
+        let antTypeInt = Double(self.gameScene.randRange(lower: 0, upper: 1))
         var antTypeStr = ""
         
         if (antTypeInt == 1) {
@@ -45,12 +45,12 @@ class Ant: Entity {
         }
         
         let texture = SKTexture(imageNamed:"ant_walk_1"+antTypeStr)
-        super.init(texture: texture, color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         self.position = CGPoint(x: self.gameScene.xOfRight(), y: self.gameScene.yOfGround()+5)
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: self.size.width, height: self.size.height))
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
         self.physicsBody?.restitution = 0
-        self.physicsBody?.dynamic = true
+        self.physicsBody?.isDynamic = true
         self.physicsBody?.allowsRotation = false // node should always be upright
         self.physicsBody?.categoryBitMask = antCategory
         self.physicsBody?.contactTestBitMask = koalaCategory | rockCategory
@@ -58,32 +58,35 @@ class Ant: Entity {
         self.name = "ant"
         self.zPosition = 3
         
-        let deQueue = SKAction.runBlock({()
-            self.gameScene.nodeQueue.removeObject(self)
+        let deQueue = SKAction.run({()
+            let index = self.gameScene.nodeQueue.index(of: self)
+            self.gameScene.nodeQueue.remove(at: index!)
         })
         
-        var duration = NSTimeInterval(self.gameScene.antDurationKrazy)
+        var duration = TimeInterval(self.gameScene.antDurationKrazy)
         if self.difficulty == "Easy" {
-            duration = NSTimeInterval(self.gameScene.antDurationEasy)
-        } else if self.difficulty == "Hard" {
-            duration = NSTimeInterval(self.gameScene.antDurationHard)
+            duration = TimeInterval(self.gameScene.antDurationEasy)
+        }
+        else if self.difficulty == "Hard" {
+            duration = TimeInterval(self.gameScene.antDurationHard)
         }
 
         var actions: [SKAction] = []
         if (antTypeStr == "") {
             // red ants will move once, and the dart towards koala
             // making them more dangerous than black ants
-            actions.append(SKAction.moveToX(500, duration: 2))
-            actions.append(SKAction.moveToX(-100, duration: 1.0))
-        } else {
+            actions.append(SKAction.moveTo(x: 500, duration: 2))
+            actions.append(SKAction.moveTo(x: -100, duration: 1.0))
+        }
+        else {
             // black ant
-            actions.append(SKAction.moveToX(-200, duration: duration))
+            actions.append(SKAction.moveTo(x: -200, duration: duration))
         }
         
         actions.append(deQueue)
         actions.append(SKAction.removeFromParent())
         
-        self.runAction(SKAction.sequence(actions))
+        self.run(SKAction.sequence(actions))
         
         // walking animation
         let move1 = SKTexture(imageNamed: "ant_walk_1"+antTypeStr)
@@ -92,29 +95,35 @@ class Ant: Entity {
         var animationSpeed = self.gameScene.antAnimationSpeedEasy
         if self.difficulty == "Hard" {
             animationSpeed = self.gameScene.antAnimationSpeedHard
-        } else if self.difficulty == "Krazy" {
+        }
+        else if self.difficulty == "Krazy" {
             animationSpeed = self.gameScene.antAnimationSpeedKrazy
         }
         
-        let moves = SKAction.animateWithTextures([move1, move2], timePerFrame: animationSpeed)
+        let moves = SKAction.animate(with: [move1, move2], timePerFrame: animationSpeed)
         
-        self.runAction(SKAction.repeatActionForever(moves), withKey:"move")
+        self.run(SKAction.repeatForever(moves), withKey:"move")
     }
     
     override func kill() {
-        self.gameScene.addPoof(self.position)
+        self.gameScene.addPoof(loc: self.position)
         self.removeFromParent()
         
-        if self.gameScene.nodeQueue.removeObject(self) == true {
-            // we need to wrap this because multiple rocks from a
-            // spray can hit the same ant and we don't want to
-            // give them more than one point per kill
-            self.gameScene.antsKilled++
-            self.gameScene.lastKill = NSDate()
-            self.gameScene.score++
-            self.gameScene.clearStreak++
-            self.gameScene.updateScoreBoard(self.gameScene.score)
-            self.gameScene.showclearStreakLabel()
+        let index = self.gameScene.nodeQueue.index(of: self)
+        
+        if index != nil {
+            let result = self.gameScene.nodeQueue.remove(at: index!)
+            if result is SKSpriteNode {
+                // We need to wrap this because multiple rocks from a spray can hit
+                // the same ant and we don't want to give them more than one point
+                // per kill
+                self.gameScene.antsKilled+=1
+                self.gameScene.lastKill = Date()
+                self.gameScene.score+=1
+                self.gameScene.clearStreak+=1
+                self.gameScene.updateScoreBoard(score: self.gameScene.score)
+                self.gameScene.showclearStreakLabel()
+            }
         }
     }
     
