@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -82,11 +64,11 @@ class SettingsScene: SKScene {
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"KrazyKoalaRibbon")
-        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-175)
         banner.zPosition = 2
         banner.name = name
-        banner.xScale = 1.5
-        banner.yScale = 1.5
+        banner.xScale = 1
+        banner.yScale = 1
         self.addChild(banner)
         
         self.addBackButton()
@@ -95,8 +77,8 @@ class SettingsScene: SKScene {
         self.addChild(
             self.helpers.createLabel(
                 text: String(format: "Vibrate on: "),
-                fontSize: 24,
-                position: CGPoint(x: panel.frame.midX-200, y: panel.frame.midY+75)
+                fontSize: 18,
+                position: CGPoint(x: panel.frame.midX-150, y: panel.frame.midY+75)
             )
         )
         
@@ -107,17 +89,19 @@ class SettingsScene: SKScene {
             self.vibrationSwitch = SKSpriteNode(imageNamed:"button_unchecked")
         }
         
-        self.vibrationSwitch.position = CGPoint(x: self.frame.midX, y: self.frame.midY+75)
+        self.vibrationSwitch.position = CGPoint(x: self.frame.midX-70, y: self.frame.midY+80)
         self.vibrationSwitch.name = "vibration"
         self.vibrationSwitch.zPosition = 2
+        self.vibrationSwitch.xScale = 0.8
+        self.vibrationSwitch.yScale = 0.8
         self.addChild(self.vibrationSwitch)
         
         // Play music
         self.addChild(
             self.helpers.createLabel(
                 text: String(format: "Music on: "),
-                fontSize: 24,
-                position: CGPoint(x: self.frame.midX-200, y: self.frame.midY)
+                fontSize: 18,
+                position: CGPoint(x: self.frame.midX-144, y: self.frame.midY)
             )
         )
         
@@ -128,16 +112,18 @@ class SettingsScene: SKScene {
             self.musicSwitch = SKSpriteNode(imageNamed:"button_unchecked")
         }
         
-        self.musicSwitch.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        self.musicSwitch.position = CGPoint(x: self.frame.midX-70, y: self.frame.midY+10)
         self.musicSwitch.name = "music"
         self.musicSwitch.zPosition = 2
+        self.musicSwitch.xScale = 0.8
+        self.musicSwitch.yScale = 0.8
         self.addChild(self.musicSwitch)
         
         // Game center
         self.addChild(self.helpers.createLabel(
             text: String(format: "Game center on: "),
-            fontSize: 24,
-            position: CGPoint(x: self.frame.midX-200, y: self.frame.midY-75))
+            fontSize: 18,
+            position: CGPoint(x: self.frame.midX-175, y: self.frame.midY-75))
         )
         
         if self.helpers.getGameCenterSetting() == true {
@@ -147,16 +133,18 @@ class SettingsScene: SKScene {
             self.gameCenterSwitch = SKSpriteNode(imageNamed:"button_unchecked")
         }
         
-        self.gameCenterSwitch.position = CGPoint(x: self.frame.midX, y: self.frame.midY-75)
+        self.gameCenterSwitch.position = CGPoint(x: self.frame.midX-70, y: self.frame.midY-65)
         self.gameCenterSwitch.name = "gamecenter"
         self.gameCenterSwitch.zPosition = 2
+        self.gameCenterSwitch.xScale = 0.8
+        self.gameCenterSwitch.yScale = 0.8
         self.addChild(self.gameCenterSwitch)
         
         // Clear stats
         self.addChild(
             self.helpers.createLabel(
                 text: String(format: "Clear Stats"),
-                fontSize: 24,
+                fontSize: 18,
                 position: CGPoint(x: self.frame.midX+250, y: self.frame.midY-175),
                 color: SKColor.blue
             )

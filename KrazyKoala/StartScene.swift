@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -98,11 +80,11 @@ class StartScene: SKScene {
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"KrazyKoalaRibbon")
-        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-175)
         banner.zPosition = 2
         banner.name = name
-        banner.xScale = 1.5
-        banner.yScale = 1.5
+        banner.xScale = 1
+        banner.yScale = 1
         self.addChild(banner)
         
         self.addEasyButton()
@@ -114,7 +96,7 @@ class StartScene: SKScene {
         
         self.addChild(
             self.helpers.createLabel(
-                text: "Copyright 2016, Andrew Schools.  All rights reserved.",
+                text: "Copyright 2021, Andrew Schools.  All rights reserved.",
                 fontSize: 14,
                 position: CGPoint(x: self.frame.midX, y: self.frame.midY-150)
             )
@@ -122,7 +104,7 @@ class StartScene: SKScene {
         
         self.addChild(
             self.helpers.createLabel(
-                text: "v2.2.",
+                text: "v2.3.",
                 fontSize: 10,
                 position: CGPoint(x: self.frame.midX, y: self.frame.midY-165)
             )
@@ -163,7 +145,7 @@ class StartScene: SKScene {
     
     func addKoala() {
         let koala = SKSpriteNode(imageNamed: "koala_walk01")
-        koala.position = CGPoint(x: self.frame.midX, y: self.frame.midY+50)
+        koala.position = CGPoint(x: self.frame.midX, y: self.frame.midY+20)
         koala.zPosition = 2
         
         let walk1 = SKTexture(imageNamed: "koala_walk01")
@@ -177,7 +159,7 @@ class StartScene: SKScene {
     
     func addToolTip() {
         let node = SKSpriteNode(imageNamed: "Tooltip")
-        node.position = CGPoint(x: self.frame.midX+10, y: self.frame.midY+125)
+        node.position = CGPoint(x: self.frame.midX+10, y: self.frame.midY+95)
         node.zPosition = 2
         
         self.toolTip = node
@@ -205,7 +187,7 @@ class StartScene: SKScene {
     
     func addEasyButton() {
         let button = SKSpriteNode(imageNamed:"EasyButton")
-        button.position = CGPoint(x: self.frame.midX-225, y: self.frame.midY-50)
+        button.position = CGPoint(x: self.frame.midX-225, y: self.frame.midY-80)
         button.zPosition = 99
         button.name = name
         button.name = "Easy"
@@ -215,7 +197,7 @@ class StartScene: SKScene {
     
     func addHardButton() {
         let button = SKSpriteNode(imageNamed:"HardButton")
-        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY-50)
+        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY-80)
         button.zPosition = 99
         button.name = name
         button.name = "Hard"
@@ -225,7 +207,7 @@ class StartScene: SKScene {
     
     func addKrazyButton() {
         let button = SKSpriteNode(imageNamed:"KrazyButton")
-        button.position = CGPoint(x: self.frame.midX+225, y: self.frame.midY-50)
+        button.position = CGPoint(x: self.frame.midX+225, y: self.frame.midY-80)
         button.zPosition = 99
         button.name = name
         button.name = "Krazy"

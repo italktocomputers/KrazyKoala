@@ -54,7 +54,10 @@
 		872FB7D91A94C11700EC1106 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872FB7D81A94C11700EC1106 /* AppDelegate.swift */; };
 		8739888B1AB5DBC700BFF29F /* SplashScreen1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8739888A1AB5DBC700BFF29F /* SplashScreen1.png */; };
 		87463A7E1A7EDFBD00F3E31F /* LeaderboardMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87463A7D1A7EDFBD00F3E31F /* LeaderboardMenuScene.swift */; };
-		876435F82080C0FF00A2F0C0 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876435F72080C0FF00A2F0C0 /* FBSDKShareKit.framework */; };
+		87468C1C26421F620011EB4D /* fireball.png in Resources */ = {isa = PBXBuildFile; fileRef = 87468C1B26421F620011EB4D /* fireball.png */; };
+		87468C1E264220460011EB4D /* Fireball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87468C1D264220460011EB4D /* Fireball.swift */; };
+		87468C20264220B50011EB4D /* fireball-package.png in Resources */ = {isa = PBXBuildFile; fileRef = 87468C1F264220B50011EB4D /* fireball-package.png */; };
+		87468C22264220CD0011EB4D /* FireballItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87468C21264220CD0011EB4D /* FireballItem.swift */; };
 		876904331A6ABF75003FA10E /* HelpScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876904321A6ABF75003FA10E /* HelpScene.swift */; };
 		8774FDA41A7FBC57007D97E0 /* LeaderboardScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8774FDA31A7FBC57007D97E0 /* LeaderboardScene.swift */; };
 		877CF5781A81C30700B1DC53 /* help.png in Resources */ = {isa = PBXBuildFile; fileRef = 877CF5751A81C30700B1DC53 /* help.png */; };
@@ -212,6 +215,11 @@
 		87C134BF1A68A02900EAE3E1 /* bomb_red_dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C134BE1A68A02900EAE3E1 /* bomb_red_dark@2x.png */; };
 		87D8DDE31A7E9CC70095E569 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D8DDE21A7E9CC70095E569 /* GameKit.framework */; };
 		87D8DDE51A7E9F680095E569 /* GameCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D8DDE41A7E9F680095E569 /* GameCenterController.swift */; };
+		87DFE9282642F1850070A914 /* plainrock-package@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87DFE9252642F1850070A914 /* plainrock-package@2x.png */; };
+		87DFE9292642F1850070A914 /* bluerock-package@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87DFE9262642F1850070A914 /* bluerock-package@2x.png */; };
+		87DFE92A2642F1850070A914 /* redrock-package@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87DFE9272642F1850070A914 /* redrock-package@2x.png */; };
+		87DFE92C264306380070A914 /* shield.png in Resources */ = {isa = PBXBuildFile; fileRef = 87DFE92B264306380070A914 /* shield.png */; };
+		87DFE96E2645F1770070A914 /* EntityProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DFE96D2645F1770070A914 /* EntityProtocol.swift */; };
 		87E811BD1ACD347600112C8E /* BG_Jungle_hor_rpt_ground_1280x800.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E811BB1ACD347600112C8E /* BG_Jungle_hor_rpt_ground_1280x800.png */; };
 		87E811BE1ACD347600112C8E /* BG_Jungle_hor_rpt_ground_1920x640.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E811BC1ACD347600112C8E /* BG_Jungle_hor_rpt_ground_1920x640.png */; };
 		87E811C21ACE0A7900112C8E /* SegmentedBase.png in Resources */ = {isa = PBXBuildFile; fileRef = 87E811BF1ACE0A7900112C8E /* SegmentedBase.png */; };
@@ -299,8 +307,10 @@
 		872FB7D81A94C11700EC1106 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8739888A1AB5DBC700BFF29F /* SplashScreen1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SplashScreen1.png; sourceTree = "<group>"; };
 		87463A7D1A7EDFBD00F3E31F /* LeaderboardMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeaderboardMenuScene.swift; sourceTree = "<group>"; };
-		876435F52080C0AC00A2F0C0 /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.txt; path = "../../FacebookSDKs-iOS-4/README.txt"; sourceTree = "<group>"; };
-		876435F72080C0FF00A2F0C0 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../FacebookSDKs-iOS-4/FBSDKShareKit.framework"; sourceTree = "<group>"; };
+		87468C1B26421F620011EB4D /* fireball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fireball.png; sourceTree = "<group>"; };
+		87468C1D264220460011EB4D /* Fireball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fireball.swift; sourceTree = "<group>"; };
+		87468C1F264220B50011EB4D /* fireball-package.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fireball-package.png"; sourceTree = "<group>"; };
+		87468C21264220CD0011EB4D /* FireballItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireballItem.swift; sourceTree = "<group>"; };
 		876904321A6ABF75003FA10E /* HelpScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpScene.swift; sourceTree = "<group>"; };
 		8774FDA31A7FBC57007D97E0 /* LeaderboardScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeaderboardScene.swift; sourceTree = "<group>"; };
 		877CF5751A81C30700B1DC53 /* help.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = help.png; sourceTree = "<group>"; };
@@ -459,6 +469,11 @@
 		87C134BE1A68A02900EAE3E1 /* bomb_red_dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bomb_red_dark@2x.png"; sourceTree = "<group>"; };
 		87D8DDE21A7E9CC70095E569 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		87D8DDE41A7E9F680095E569 /* GameCenterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCenterController.swift; sourceTree = "<group>"; };
+		87DFE9252642F1850070A914 /* plainrock-package@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plainrock-package@2x.png"; sourceTree = "<group>"; };
+		87DFE9262642F1850070A914 /* bluerock-package@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bluerock-package@2x.png"; sourceTree = "<group>"; };
+		87DFE9272642F1850070A914 /* redrock-package@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "redrock-package@2x.png"; sourceTree = "<group>"; };
+		87DFE92B264306380070A914 /* shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shield.png; sourceTree = "<group>"; };
+		87DFE96D2645F1770070A914 /* EntityProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityProtocol.swift; sourceTree = "<group>"; };
 		87E811BB1ACD347600112C8E /* BG_Jungle_hor_rpt_ground_1280x800.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BG_Jungle_hor_rpt_ground_1280x800.png; sourceTree = "<group>"; };
 		87E811BC1ACD347600112C8E /* BG_Jungle_hor_rpt_ground_1920x640.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BG_Jungle_hor_rpt_ground_1920x640.png; sourceTree = "<group>"; };
 		87E811BF1ACE0A7900112C8E /* SegmentedBase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SegmentedBase.png; sourceTree = "<group>"; };
@@ -489,7 +504,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				876435F82080C0FF00A2F0C0 /* FBSDKShareKit.framework in Frameworks */,
 				87D8DDE31A7E9CC70095E569 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -600,6 +614,9 @@
 				872EECCC1AFEB64100C2ED79 /* BlueRock.swift */,
 				872EECCE1AFEB64900C2ED79 /* RedRock.swift */,
 				872EECD01AFEBFAA00C2ED79 /* Entity.swift */,
+				87468C1D264220460011EB4D /* Fireball.swift */,
+				87468C21264220CD0011EB4D /* FireballItem.swift */,
+				87DFE96D2645F1770070A914 /* EntityProtocol.swift */,
 			);
 			name = Entity;
 			sourceTree = "<group>";
@@ -607,6 +624,12 @@
 		8733C5911AACE472007BB039 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				87DFE92B264306380070A914 /* shield.png */,
+				87DFE9262642F1850070A914 /* bluerock-package@2x.png */,
+				87DFE9252642F1850070A914 /* plainrock-package@2x.png */,
+				87DFE9272642F1850070A914 /* redrock-package@2x.png */,
+				87468C1F264220B50011EB4D /* fireball-package.png */,
+				87468C1B26421F620011EB4D /* fireball.png */,
 				878E52CC1B135E4A001212B0 /* jumbotron.png */,
 				878E52CD1B135E4A001212B0 /* jumbotron@2x.png */,
 				878E52CE1B135E4A001212B0 /* jumbotron@3x.png */,
@@ -818,8 +841,6 @@
 		876435EB2080BCF000A2F0C0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				876435F72080C0FF00A2F0C0 /* FBSDKShareKit.framework */,
-				876435F52080C0AC00A2F0C0 /* README.txt */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -892,6 +913,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				he,
@@ -919,6 +941,7 @@
 				87B450F61A5ACCC9007204E0 /* ant_stand@2x.png in Resources */,
 				877CF6C21A8D61C400B1DC53 /* SegmentedScore1@2x.png in Resources */,
 				8739888B1AB5DBC700BFF29F /* SplashScreen1.png in Resources */,
+				87468C20264220B50011EB4D /* fireball-package.png in Resources */,
 				877CF6211A87DAA900B1DC53 /* GameOverRibbon@2x.png in Resources */,
 				877CF6E11A8E704400B1DC53 /* poof4_white.png in Resources */,
 				877CF69A1A8D196100B1DC53 /* LeaderboardRedbtn.png in Resources */,
@@ -941,6 +964,7 @@
 				871294A31A58CEB30069F926 /* LaunchScreen.xib in Resources */,
 				87E811DC1ACF310F00112C8E /* PausedRibbon@3x.png in Resources */,
 				877CF6971A8D196100B1DC53 /* LeaderboardGreenbtn.png in Resources */,
+				87468C1C26421F620011EB4D /* fireball.png in Resources */,
 				87C134B41A67395E00EAE3E1 /* redrocks@2x.png in Resources */,
 				877CF6531A89821200B1DC53 /* Achievementsbtn@2x.png in Resources */,
 				877CF6BB1A8D61C400B1DC53 /* SegmentedClearStreak1.png in Resources */,
@@ -949,6 +973,7 @@
 				877CF5E61A86E26700B1DC53 /* Infobtn@3x.png in Resources */,
 				877CF5F11A86EB1100B1DC53 /* Panel@2x.png in Resources */,
 				877CF67E1A8AB72600B1DC53 /* button_unchecked@3x.png in Resources */,
+				87DFE9282642F1850070A914 /* plainrock-package@2x.png in Resources */,
 				877CF5D31A8683A700B1DC53 /* KrazyButton@2x.png in Resources */,
 				877CF6C11A8D61C400B1DC53 /* SegmentedScore1.png in Resources */,
 				87854EC11ADAECEB001565B7 /* ant_walk_1_black@2x.png in Resources */,
@@ -1033,6 +1058,7 @@
 				877CF5FA1A86FE0800B1DC53 /* Backbtn@2x.png in Resources */,
 				87E811CA1ACEC5C100112C8E /* Pausebtn@3x.png in Resources */,
 				877CF68D1A8C4D1D00B1DC53 /* LeaderboardsRibbon@3x.png in Resources */,
+				87DFE9292642F1850070A914 /* bluerock-package@2x.png in Resources */,
 				877CF5F01A86EB1100B1DC53 /* Panel.png in Resources */,
 				871294D11A58CF710069F926 /* koala_walk01@2x.png in Resources */,
 				87E87C6D1A61AA6400BA7853 /* KrazyKoala1024x1024_2.png in Resources */,
@@ -1074,6 +1100,7 @@
 				87E811DA1ACF310F00112C8E /* PausedRibbon.png in Resources */,
 				87854EBF1ADAECEB001565B7 /* ant_stand_black@2x.png in Resources */,
 				877CF6041A8706E700B1DC53 /* PointsBar@x3.png in Resources */,
+				87DFE92C264306380070A914 /* shield.png in Resources */,
 				878E52BE1B1155CD001212B0 /* Info_icon.png in Resources */,
 				871294CC1A58CF710069F926 /* koala_idle.png in Resources */,
 				878E52A31B115346001212B0 /* VerticalMenu.png in Resources */,
@@ -1081,6 +1108,7 @@
 				878E52D11B135E4A001212B0 /* jumbotron@3x.png in Resources */,
 				877CF6DB1A8E704400B1DC53 /* poof2_white.png in Resources */,
 				871294CE1A58CF710069F926 /* koala_jump.png in Resources */,
+				87DFE92A2642F1850070A914 /* redrock-package@2x.png in Resources */,
 				877CF63C1A8845F300B1DC53 /* G_@2x.png in Resources */,
 				8720A0D91A59632800F9B3B0 /* game-over.wav in Resources */,
 				877CF5781A81C30700B1DC53 /* help.png in Resources */,
@@ -1131,8 +1159,10 @@
 			files = (
 				872EECC41AFEA33800C2ED79 /* RedRockItem.swift in Sources */,
 				872EECD11AFEBFAA00C2ED79 /* Entity.swift in Sources */,
+				87DFE96E2645F1770070A914 /* EntityProtocol.swift in Sources */,
 				877CF6421A897CC400B1DC53 /* StagingScene.swift in Sources */,
 				872EECCF1AFEB64900C2ED79 /* RedRock.swift in Sources */,
+				87468C1E264220460011EB4D /* Fireball.swift in Sources */,
 				8774FDA41A7FBC57007D97E0 /* LeaderboardScene.swift in Sources */,
 				871294991A58CEB30069F926 /* GameScene.swift in Sources */,
 				870AECC01A7C467700620C6F /* Helpers.swift in Sources */,
@@ -1144,6 +1174,7 @@
 				872EECC21AFEA32700C2ED79 /* Ant.swift in Sources */,
 				8705197E1C8A742B0055DADB /* FacebookHelpers.swift in Sources */,
 				872FB7D91A94C11700EC1106 /* AppDelegate.swift in Sources */,
+				87468C22264220CD0011EB4D /* FireballItem.swift in Sources */,
 				870AECC41A7DD78D00620C6F /* SettingsScene.swift in Sources */,
 				87463A7E1A7EDFBD00F3E31F /* LeaderboardMenuScene.swift in Sources */,
 				87854EC71AE46906001565B7 /* Bridging-Header.m in Sources */,
@@ -1308,10 +1339,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/andrewschools/FacebookSDKs-iOS-4",
-				);
 				INFOPLIST_FILE = KrazyKoala/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1331,10 +1358,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/andrewschools/FacebookSDKs-iOS-4",
-				);
 				INFOPLIST_FILE = KrazyKoala/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

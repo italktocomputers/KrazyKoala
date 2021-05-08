@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -77,27 +59,27 @@ class ConfirmClearStatsScene: SKScene {
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"KrazyKoalaRibbon")
-        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-175)
         banner.zPosition = 2
-        banner.xScale = 1.5
-        banner.yScale = 1.5
+        banner.xScale = 1
+        banner.yScale = 1
         self.addChild(banner)
         
         self.addBackButton()
         
         self.addChild(
             self.helpers.createLabel(
-                text: "Are you sure?",
-                fontSize: 36,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY+50),
+                text: "are you sure",
+                fontSize: 24,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+30),
                 color: SKColor.black
             )
         )
         
         self.addChild(
             self.helpers.createLabel(
-                text: "You want to clear your local stats?",
-                fontSize: 24,
+                text: "you want to clear your local stats?",
+                fontSize: 18,
                 position: CGPoint(x: self.frame.midX, y: self.frame.midY),
                 color: SKColor.black
             )
@@ -105,13 +87,13 @@ class ConfirmClearStatsScene: SKScene {
         
         
         let accept = SKSpriteNode(imageNamed:"Accept")
-        accept.position = CGPoint(x: self.frame.midX-100, y: self.frame.midY-100)
+        accept.position = CGPoint(x: self.frame.midX-75, y: self.frame.midY-50)
         accept.zPosition = 2
         accept.name = "Okay"
         self.addChild(accept)
         
         let warning = SKSpriteNode(imageNamed:"Warning")
-        warning.position = CGPoint(x: self.frame.midX+100, y: self.frame.midY-100)
+        warning.position = CGPoint(x: self.frame.midX+75, y: self.frame.midY-50)
         warning.zPosition = 2
         warning.name = "Cancel"
         self.addChild(warning)

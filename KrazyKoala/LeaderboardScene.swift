@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -96,18 +78,16 @@ class LeaderboardScene: SKScene {
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"LeaderboardsRibbon")
-        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-175)
         banner.zPosition = 2
         banner.name = name
-        banner.xScale = 1.5
-        banner.yScale = 1.5
+        banner.xScale = 1
+        banner.yScale = 1
         self.addChild(banner)
         
         self.addBackButton()
-        
-        self.segmentedBase = self.addSegmentedBase()
-        self.addSegmentedScoreButtonOn(parentNode: self.segmentedBase)
-        self.addSegmentedClearStreakButtonOff(parentNode: self.segmentedBase)
+        addHighScoreLabel()
+        addHighClearStreakLabel()
         
         self.gameCenterController.getLeaderBoard(type: self.type, difficulty: self.difficulty, range: NSMakeRange(self.loc, self.len), callback: self.showStatsTable)
         
@@ -150,46 +130,24 @@ class LeaderboardScene: SKScene {
         self.addChild(node)
     }
     
-    func addSegmentedBase() -> SKSpriteNode {
-        let node = SKSpriteNode(imageNamed:"SegmentedBase")
-        node.position = CGPoint(x: self.frame.midX, y: self.frame.midY+70)
-        node.zPosition = 2
-        node.name = "SegmentedBase"
-        self.addChild(node)
-        
-        return node
+    func addHighScoreLabel() {
+        let labelScore = self.helpers.createLabel(
+            text: String("High Score"),
+            fontSize: 18,
+            position: CGPoint(x: self.frame.midX-125, y: self.frame.midY+95),
+            name: "highScore"
+        )
+        self.addChild(labelScore)
     }
     
-    func addSegmentedScoreButtonOn(parentNode: SKSpriteNode) {
-        let node = SKSpriteNode(imageNamed:"SegmentedScore1")
-        node.position = CGPoint(x: parentNode.frame.midX-105, y: parentNode.frame.midY)
-        node.zPosition = 3
-        node.name = "SegmentedScoreBtn1"
-        self.addChild(node)
-    }
-    
-    func addSegmentedScoreButtonOff(parentNode: SKSpriteNode) {
-        let node = SKSpriteNode(imageNamed:"SegmentedScore2")
-        node.position = CGPoint(x: parentNode.frame.midX-105, y: parentNode.frame.midY)
-        node.zPosition = 3
-        node.name = "SegmentedScoreBtn2"
-        self.addChild(node)
-    }
-    
-    func addSegmentedClearStreakButtonOn(parentNode: SKSpriteNode) {
-        let node = SKSpriteNode(imageNamed:"SegmentedClearStreak1")
-        node.position = CGPoint(x: parentNode.frame.midX+105, y: parentNode.frame.midY)
-        node.zPosition = 3
-        node.name = "SegmentedClearStreakBtn1"
-        self.addChild(node)
-    }
-    
-    func addSegmentedClearStreakButtonOff(parentNode: SKSpriteNode) {
-        let node = SKSpriteNode(imageNamed:"SegmentedClearStreak2")
-        node.position = CGPoint(x: parentNode.frame.midX+105, y: parentNode.frame.midY)
-        node.zPosition = 3
-        node.name = "SegmentedClearStreakBtn2"
-        self.addChild(node)
+    func addHighClearStreakLabel() {
+        let labelScore = self.helpers.createLabel(
+            text: String("High Clear Streak"),
+            fontSize: 18,
+            position: CGPoint(x: self.frame.midX+125, y: self.frame.midY+95),
+            name: "highScore"
+        )
+        self.addChild(labelScore)
     }
     
     func updateScoreBoard(index: Int) {
@@ -199,8 +157,6 @@ class LeaderboardScene: SKScene {
             self.helpers.removeNodeByName(scene: self, name: "SegmentedScoreBtn2")
             self.helpers.removeNodeByName(scene: self, name: "SegmentedClearStreakBtn1")
             self.helpers.removeNodeByName(scene: self, name: "SegmentedClearStreakBtn2")
-            self.addSegmentedScoreButtonOn(parentNode: self.segmentedBase)
-            self.addSegmentedClearStreakButtonOff(parentNode: self.segmentedBase)
         }
         else if index == 1 {
             self.type = "ClearStreak"
@@ -208,8 +164,6 @@ class LeaderboardScene: SKScene {
             self.helpers.removeNodeByName(scene: self, name: "SegmentedClearStreakBtn2")
             self.helpers.removeNodeByName(scene: self, name: "SegmentedScoreBtn1")
             self.helpers.removeNodeByName(scene: self, name: "SegmentedScoreBtn2")
-            self.addSegmentedClearStreakButtonOn(parentNode: self.segmentedBase)
-            self.addSegmentedScoreButtonOff(parentNode: self.segmentedBase)
         }
         
         self.loc = 1 // Switching leaderboards so we need to start back at 1

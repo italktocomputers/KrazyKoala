@@ -7,13 +7,13 @@ Copyright (c) 2021 Andrew Schools
 import SpriteKit
 import Foundation
 
-class Rock : Entity, IEntity {
+class Fireball : Entity, IEntity {
     var gameScene: GameScene
     
     init(pointStart: CGPoint, pointEnd: CGPoint, gameScene: GameScene) {
         self.gameScene = gameScene
         
-        let texture = SKTexture(imageNamed: "rock")
+        let texture = SKTexture(imageNamed: "fireball")
         super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         self.position = pointStart
@@ -24,10 +24,12 @@ class Rock : Entity, IEntity {
         self.physicsBody?.contactTestBitMask = flyCategory | antCategory
         self.physicsBody?.collisionBitMask = 0
         self.physicsBody?.affectedByGravity = false
-        self.name = "rock"
+        self.name = "fireball"
+        self.xScale = 0.2
+        self.yScale = 0.2
         self.zPosition = 101
         
-        let move = SKAction.move(to: pointEnd, duration: TimeInterval(1))
+        let move = SKAction.move(to: pointEnd, duration: TimeInterval(3))
         let removeNode = SKAction.removeFromParent()
         
         self.run(SKAction.repeatForever(SKAction.sequence([move, removeNode])))

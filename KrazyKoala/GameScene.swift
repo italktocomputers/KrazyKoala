@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -64,6 +46,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var minIntervalToAddRedRock: Double = 30.0
     var minIntervalToAddBlueRock: Double = 45.0
+    var minIntervalToAddFireball: Double = 45.0
     var minIntervalToAddBomb: Double = 15.0
     
     var maxIntervalToAddFlyEasy: Double = 6.0
@@ -75,18 +58,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var maxIntervalToAddRedRock: Double = 35.0
     var maxIntervalToAddBlueRock: Double = 50.0
+    var maxIntervalToAddFireball: Double = 60.0
     var maxIntervalToAddBomb: Double = 20.0
     
     var randIntervalToAddFly: Double = 2.0
     var randIntervalToAddAnt: Double = 2.0
     var randIntervalToAddRedRock: Double = 30.0
     var randIntervalToAddBlueRock: Double = 45.0
+    var randIntervalToAddFireball: Double = 60.0
     var randIntervalToAddBomb: Double = 15.0
     
     var lastTimeFlyAdded = Date()
     var lastTimeAntAdded = Date()
     var lastTimeRedRockAdded = Date()
     var lastTimeBlueRockAdded = Date()
+    var lastTimeFireballAdded = Date()
     var lastTimeBombAdded = Date()
     var lastTimeLevelAdjusted = Date()
     var lastTimeKillQueue = Date()
@@ -179,19 +165,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func yOfTop() -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            return 768
+            return 700
         }
         else if self.view?.bounds.width == 480 {
-            return 730
+            return 700
         }
         
-        return 675
+        return 700
     }
     
     func yMaxPlacementOfItem() -> CGFloat {
         // We want to make sure the koala can
         // reach each item
-        return self.yOfTop()-200
+        return self.yOfTop()-300
     }
     
     func xOfRight() -> CGFloat {
@@ -199,15 +185,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func yPosOfMenuBar() -> CGFloat {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return 728
-        }
-        else if self.view?.bounds.width == 480 {
-            return 690
-        }
-        else {
-            return 625
-        }
+        return self.frame.height - 150
     }
     
     func fromApplicationDidBecomeActive() {
@@ -274,6 +252,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.controller.adBannerView!.isHidden = true
         }
         */
+        
         // Game music
         if self.helpers.getMusicSetting() == true {
             self.isMusicEnabled = true
@@ -295,6 +274,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.updateRedRockIndicator(total: 0)
         self.addBlueRockIndicator()
         self.updateBlueRockIndicator(total: 0)
+        self.addFireballIndicator()
+        self.updateFireballIndicator(total: 0)
         self.addPauseButton()
     }
     
@@ -320,6 +301,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func addRedRockIndicator() {
+        let node = SKSpriteNode(imageNamed:"redrock")
+        node.zPosition = 1
+        node.position = CGPoint(x: 100, y: self.yPosOfMenuBar())
+        self.addChild(node)
+    }
+    
+    func updateRedRockIndicator(total: Int) {
+        self.helpers.removeNodeByName(scene: self, name: "redRockIndicator")
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "%i", total),
+                fontSize: 20,
+                position: CGPoint(x: 125, y: self.yPosOfMenuBar()-9),
+                name: "redRockIndicator",
+                color: SKColor.white
+            )
+        )
+    }
+    
     func addBlueRockIndicator() {
         let node = SKSpriteNode(imageNamed:"bluerock")
         node.zPosition = 1
@@ -340,21 +341,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         )
     }
     
-    func addRedRockIndicator() {
-        let node = SKSpriteNode(imageNamed:"redrock")
+    func addFireballIndicator() {
+        let node = SKSpriteNode(imageNamed:"fireball")
         node.zPosition = 1
-        node.position = CGPoint(x: 100, y: self.yPosOfMenuBar())
+        node.xScale = 0.2
+        node.yScale = 0.2
+        node.position = CGPoint(x: 210, y: self.yPosOfMenuBar())
         self.addChild(node)
     }
     
-    func updateRedRockIndicator(total: Int) {
-        self.helpers.removeNodeByName(scene: self, name: "redRockIndicator")
+    func updateFireballIndicator(total: Int) {
+        self.helpers.removeNodeByName(scene: self, name: "fireballIndicator")
         self.addChild(
             self.helpers.createLabel(
                 text: String(format: "%i", total),
                 fontSize: 20,
-                position: CGPoint(x: 125, y: self.yPosOfMenuBar()-9),
-                name: "redRockIndicator",
+                position: CGPoint(x: 235, y: self.yPosOfMenuBar()-9),
+                name: "fireballIndicator",
                 color: SKColor.white
             )
         )
@@ -433,7 +436,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.removeAllItems()
         self.audioPlayer.stop() // stop game music
         
-        self.koala!.die()
+        self.koala!.kill()
         
         // Dim background
         self.enumerateChildNodes(
@@ -474,123 +477,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // Collision between nodes detected
     func didBegin(_ contact: SKPhysicsContact) {
-         // I decided to keep the contact method in the scene and
-         // not have one for each Entity for two reasons.  The
-         // first reason has to do with code being executed in
-         // parallel which results in race conditions.  The second
-         // reason being Entity's will behave differently, depending
-         // on what scene they are in.
-        
         let body1 = contact.bodyA.node
         let body2 = contact.bodyB.node
         
-        // Something made contact with the Koala
-        if body1 is Koala || body2 is Koala {
-            var _koala: Koala?
-            var other: SKNode
-            
-            if body1 is Koala {
-                _koala = body1 as? Koala
-                other = body2!
-            }
-            else {
-                _koala = body2 as? Koala
-                other = body1!
-            }
-            
-            // Koala has contacted a red rock, blue rock or a bomb
-            if other.name == "bluerock" || other.name == "redrock" || other.name == "bomb" {
-                // Play item pickup sound
-                self.run(self.energizeWav)
-                
-                if other.name == "bluerock" {
-                    _koala!.numBlueRocks = _koala!.numBlueRocks + 3
-                    self.updateBlueRockIndicator(total: _koala!.numBlueRocks)
-                }
-                else if other.name == "redrock" {
-                    _koala!.numRedRocks = _koala!.numRedRocks + 3
-                    self.updateRedRockIndicator(total: _koala!.numRedRocks)
-                }
-                else if other.name == "bomb" {
-                    self.killAllBadGuys()
-                }
-                
-                other.removeFromParent()
-            }
-            else if other.name == "ground" {
-                _koala!.walk()
-            }
-            else if other.name == "fly" {
-                _koala!.takeHit()
-                self.addLifeBar(numLives: _koala!.lives)
-            }
-            else if other.name == "ant" {
-                if (_koala!.physicsBody?.velocity.dy)! < CGFloat(0.0) {
-                    _koala!.applyBounce() // jumped on top of ant so koala will bounce
-                    //self.applyBlackAntStompAchievement()
-                }
-                else {
-                    _koala!.takeHit()
-                    _koala!.gameScene.addLifeBar(numLives: _koala!.lives)
-                }
-            }
+        if body1 == nil || body2 == nil {
+            return
         }
         
-        // Something made contact with a Fly
-        if body1 is Fly || body2 is Fly {
-            var _fly: Fly?
-            var other: SKNode
-            
-            if body1 is Fly {
-                _fly = body1 as? Fly
-                other = body2!
-            }
-            else {
-                _fly = body2 as? Fly
-                other = body1!
-            }
-            
-            if other.name == "rock" || other.name == "bluerock" || other.name == "redrock" || other.name == "koala" {
-                _fly!.kill()
-            }
+        if let e = body1 as? IEntity {
+            e.contact(scene: self, other: body2!)
         }
         
-        // Something made contact with an Ant
-        if body1 is Ant || body2 is Ant {
-            var _ant: Ant?
-            var other: SKNode
-            
-            if body1 is Ant {
-                _ant = body1 as? Ant
-                other = body2!
-            }
-            else {
-                _ant = body2 as? Ant
-                other = body1!
-            }
-            
-            if other.name == "rock" || other.name == "bluerock" || other.name == "redrock" || other.name == "koala" {
-                _ant!.kill()
-            }
-        }
-        
-        // Something made contact with a Rock
-        if body1 is Rock || body2 is Rock {
-            var _rock: Rock?
-            var other: SKNode
-            
-            if body1 is Rock {
-                _rock = body1 as? Rock
-                other = body2!
-            }
-            else {
-                _rock = body2 as? Rock
-                other = body1!
-            }
-
-            if other.name == "fly" || other.name == "ant" {
-                _rock!.removeFromParent()
-            }
+        if let e = body2 as? IEntity {
+            e.contact(scene: self, other: body1!)
         }
         
         /*
@@ -659,6 +558,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 sknode.removeFromParent()
             }
         }
+    }
+    
+    func fireBallSeek() {
+        var flys: [SKSpriteNode] = []
+        
+        for node in self.nodeQueue {
+            let sknode = node as SKSpriteNode
+            if sknode.name == "fly" {
+                flys.append(sknode)
+            }
+        }
+        
+        self.enumerateChildNodes(
+            withName: "fireball",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                var closetEnemy = CGPoint(x: 1000,y: 1000)
+                for fly in flys {
+                    let distance = abs(node.position.x - fly.position.x)
+                    if distance < abs(node.position.x - closetEnemy.x) {
+                        closetEnemy = fly.position
+                    }
+                }
+                
+                node.run(
+                    SKAction.move(
+                        to: closetEnemy, duration: TimeInterval(0.1)
+                    )
+                )
+            }
+        )
     }
     
     func addPoof(loc: CGPoint, playSound: Bool=true) {
@@ -907,6 +836,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let intervalForFly = Double(now.timeIntervalSince(self.lastTimeFlyAdded))
         let intervalForRedRock = Double(now.timeIntervalSince(self.lastTimeRedRockAdded))
         let intervalForBlueRock = Double(now.timeIntervalSince(self.lastTimeBlueRockAdded))
+        let intervalForFireball = Double(now.timeIntervalSince(self.lastTimeFireballAdded))
         let intervalForBomb = Double(now.timeIntervalSince(self.lastTimeBombAdded))
         
         if intervalForAnt >= self.randIntervalToAddAnt && self.killQueue.count == 0 {
@@ -1025,6 +955,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.lastTimeBlueRockAdded = Date()
         }
         
+        if intervalForFireball >= self.randIntervalToAddFireball {
+            let fireball = FireballItem(gameScene: self, difficulty: self.difficulty)
+            self.addChild(fireball)
+            self.nodeQueue.append(fireball)
+            
+            // Remember last time we did this so we only do it so often
+            let newInterval = self.randRange(
+                lower: UInt32(self.minIntervalToAddFireball),
+                upper: UInt32(self.maxIntervalToAddFireball)
+            )
+            self.randIntervalToAddFireball = Double(newInterval)
+            self.lastTimeFireballAdded = Date()
+        }
+        
         if intervalForBomb >= self.randIntervalToAddBomb {
             let bomb = BombItem(gameScene: self, difficulty: self.difficulty)
             self.addChild(bomb)
@@ -1109,7 +1053,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func showTextBurst(text: String) {
         let panel = SKSpriteNode(imageNamed:"jumbotron")
         
-        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY+180)
+        panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY+150)
         panel.zPosition = 9
         panel.name = "jumbotron"
         panel.alpha = 0.5
@@ -1239,7 +1183,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func checkKillQueue() {
         if self.killQueue.count > 0 {
-            let sknode = self.killQueue[0] as! Entity
+            let sknode = self.killQueue[0] as! IEntity
             sknode.kill()
             
             self.killQueue.remove(at: 0)
@@ -1327,12 +1271,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // update method so they can do what they need
             // to do during this frame cycle.
             for node in self.nodeQueue {
-                let entity = node as! Entity
+                let entity = node as! IEntity
                 entity.update(currentTime: currentTime)
             }
             
             self.moveBackground()
             self.moveForeground()
+            self.fireBallSeek()
             self.moveItemsAlongForeground()
             self.addItemsToScene()
             self.checkForNewClearStreak()

@@ -1,10 +1,8 @@
-//
-//  Helpers.swift
-//  KrazyKoala
-//
-//  Created by Andrew Schools on 1/30/15.
-//  Copyright (c) 2015 Andrew Schools. All rights reserved.
-//
+/*
+
+Copyright (c) 2021 Andrew Schools
+
+*/
 
 import Foundation
 import SpriteKit

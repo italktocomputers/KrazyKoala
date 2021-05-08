@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -83,11 +65,11 @@ class LeaderboardMenuScene: SKScene {
         self.addChild(panel)
         
         let banner = SKSpriteNode(imageNamed:"LeaderboardsRibbon")
-        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-200)
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-175)
         banner.zPosition = 2
         banner.name = name
-        banner.xScale = 1.5
-        banner.yScale = 1.5
+        banner.xScale = 1
+        banner.yScale = 1
         self.addChild(banner)
         
         self.addBackButton()
@@ -108,59 +90,59 @@ class LeaderboardMenuScene: SKScene {
     }
     
     func addEasyButton() {
-        let button = SKSpriteNode(imageNamed:"EasyButton")
-        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY+75)
-        button.zPosition = 2
-        button.name = name
-        button.name = "Easy"
-        self.addChild(button)
+        let label = self.helpers.createLabel(
+            text: "easy",
+            fontSize: 18,
+            position: CGPoint(x: self.frame.midX-150, y: self.frame.midY+60),
+            color: SKColor.black
+        )
+        
+        self.addChild(label)
         
         let node2 = SKSpriteNode(imageNamed:"LeaderboardGreenbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
-        node2.position = CGPoint(x: button.frame.midX+75, y: button.frame.midY+25)
+        node2.position = CGPoint(x: self.frame.midX-150, y: self.frame.midY)
         node2.zPosition = 3
         node2.name = "Easy"
-        node2.xScale = 1.1
-        node2.yScale = 1.1
         self.addChild(node2)
     }
     
     func addHardButton() {
-        let button = SKSpriteNode(imageNamed:"HardButton")
-        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY-25)
-        button.zPosition = 2
-        button.name = name
-        button.name = "Hard"
-        self.addChild(button)
+        let label = self.helpers.createLabel(
+            text: "hard",
+            fontSize: 18,
+            position: CGPoint(x: self.frame.midX, y: self.frame.midY+40),
+            color: SKColor.black
+        )
+        
+        self.addChild(label)
         
         let node2 = SKSpriteNode(imageNamed:"Leaderboardbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
-        node2.position = CGPoint(x: button.frame.midX+75, y: button.frame.midY+25)
+        node2.position = CGPoint(x: self.frame.midX, y: self.frame.midY-20)
         node2.zPosition = 3
         node2.name = "Hard"
-        node2.xScale = 1.1
-        node2.yScale = 1.1
         self.addChild(node2)
     }
     
     func addKrazyButton() {
-        let button = SKSpriteNode(imageNamed:"KrazyButton")
-        button.position = CGPoint(x: self.frame.midX, y: self.frame.midY-125)
-        button.zPosition = 2
-        button.name = name
-        button.name = "Krazy"
-        self.addChild(button)
+        let label = self.helpers.createLabel(
+            text: "krazy",
+            fontSize: 18,
+            position: CGPoint(x: self.frame.midX+150, y: self.frame.midY+60),
+            color: SKColor.black
+        )
+        
+        self.addChild(label)
         
         let node2 = SKSpriteNode(imageNamed:"LeaderboardRedbtn")
         node2.xScale = 1.5
         node2.yScale = 1.5
-        node2.position = CGPoint(x: button.frame.midX+75, y: button.frame.midY+25)
+        node2.position = CGPoint(x: self.frame.midX+150, y: self.frame.midY)
         node2.zPosition = 3
         node2.name = "Krazy"
-        node2.xScale = 1.1
-        node2.yScale = 1.1
         self.addChild(node2)
     }
     

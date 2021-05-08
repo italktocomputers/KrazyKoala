@@ -7,7 +7,7 @@ Copyright (c) 2021 Andrew Schools
 import SpriteKit
 import Foundation
 
-class BlueRockItem : Entity, IEntity {
+class FireballItem : Entity, IEntity {
     var gameScene: GameScene
     var difficulty: String
     
@@ -15,7 +15,7 @@ class BlueRockItem : Entity, IEntity {
         self.gameScene = gameScene
         self.difficulty = difficulty
         
-        let texture = SKTexture(imageNamed: "bluerocks")
+        let texture = SKTexture(imageNamed: "fireball-package")
         super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         let randomY = self.gameScene.randRange(
@@ -30,15 +30,10 @@ class BlueRockItem : Entity, IEntity {
         self.physicsBody?.categoryBitMask = itemCategory
         self.physicsBody?.contactTestBitMask = koalaCategory
         self.physicsBody?.collisionBitMask = 0
-        self.name = "bluerock"
+        self.xScale = 0.2
+        self.yScale = 0.2
+        self.name = "fireball-package"
         self.zPosition = 100
-        
-        // blink so user notices it
-        let blink1 = SKTexture(imageNamed: "bluerock-package")
-        let blink2 = SKTexture(imageNamed: "plainrock-package")
-        let blinks = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
-        
-        self.run(SKAction.repeatForever(blinks), withKey:"move")
     }
     
     required init?(coder aDecoder: NSCoder) {

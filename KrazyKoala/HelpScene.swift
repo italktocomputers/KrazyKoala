@@ -1,27 +1,8 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
-
 import SpriteKit
 import iAd
 
@@ -31,7 +12,7 @@ class HelpScene: SKScene {
     var helpers = Helpers()
     var panel = SKSpriteNode()
     var currentPage = 1
-    var totalPages = 5
+    var totalPages = 7
     
     init(size: CGSize, gameViewController: GameViewController) {
         self.controller = gameViewController
@@ -76,13 +57,21 @@ class HelpScene: SKScene {
         self.addChild(background)
         
         let panel = SKSpriteNode(imageNamed:"Panel")
-        panel.xScale = 1.5
-        panel.yScale = 1.5
+        panel.xScale = 1.1
+        panel.yScale = 1.1
         panel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         panel.zPosition = 1
         
         self.panel = panel
         self.addChild(self.panel)
+        
+        let banner = SKSpriteNode(imageNamed:"KrazyKoalaRibbon")
+        banner.position = CGPoint(x: self.frame.midX, y: self.frame.height-175)
+        banner.zPosition = 2
+        banner.name = name
+        banner.xScale = 1
+        banner.yScale = 1
+        self.addChild(banner)
         
         self.showFirstHelpFile()
         self.addForwardButton()
@@ -102,7 +91,7 @@ class HelpScene: SKScene {
             self.helpers.createLabel(
                 text: String(format:"Page %i of %i", self.currentPage, self.totalPages),
                 fontSize: 10,
-                position: CGPoint(x: self.panel.frame.midY+500, y: self.panel.frame.midY-200),
+                position: CGPoint(x: self.panel.frame.midY+450, y: self.panel.frame.midY-200),
                 name:"pageNums"
             )
         )
@@ -112,7 +101,7 @@ class HelpScene: SKScene {
         let node = SKSpriteNode(imageNamed:"Forwardbtn")
         node.xScale = 1.5
         node.yScale = 1.5
-        node.position = CGPoint(x: self.frame.width-50, y: self.frame.midY)
+        node.position = CGPoint(x: self.frame.width-175, y: self.frame.midY)
         node.zPosition = 2
         node.name = "Forward"
         self.addChild(node)
@@ -122,7 +111,7 @@ class HelpScene: SKScene {
         let node = SKSpriteNode(imageNamed:"Backbtn")
         node.xScale = 1.5
         node.yScale = 1.5
-        node.position = CGPoint(x: 50, y: self.frame.midY)
+        node.position = CGPoint(x: 175, y: self.frame.midY)
         node.zPosition = 2
         node.name = "Back"
         self.addChild(node)
@@ -130,16 +119,15 @@ class HelpScene: SKScene {
     
     func showFirstHelpFile() {
         let text: [String] = [
-            "The premise is simple. Destroy as many flies and ants as you can by",
-            "throwing rocks at them while making your way through the jungle. Along",
-            "the way you can collect items (blue rocks, red rocks and bombs) that can",
-            "help you stay alive.  How to play: Click to jump. While in the air",
-            "click again to throw a rock at a fly or ant to remove it from the",
-            "scene and gain a point. You are only allowed to throw a rock every",
-            "half second.  If hit by a fly you will loose a life. Walking into an",
-            "ant will do the same.  As well as throwing rocks, you can jump on ants",
-            "to clear them from the scene and gain a point.  As you progress more",
-            "flies will enter the scene but don't fret as you will also receive",
+            "The premise is simple. Destroy as many flies and ants as you can by throwing",
+            "rocks at them while making your way through the jungle. Along the way you",
+            "can collect items (blue rocks, red rocks and bombs) that can help you stay",
+            "alive.  How to play: Click to jump. While in the air click again to throw a",
+            "rock at a fly or ant to remove it from the scene and gain a point. You are only",
+            "allowed to throw a rock every half second.  If hit by a fly you will loose a",
+            "life.  Walking into an ant will do the same.  As well as throwing rocks, you",
+            "can jump on ants to clear them from the scene and gain a point.  As you progress",
+            "more flies will enter the scene but don't fret as you will also receive",
             "additional lives.  Good luck and don't forget to have fun!!!"
         ]
         
@@ -148,8 +136,8 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-200))-(i*30))),
+                    fontSize: 14,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
                     name: "help_text",
                     color: SKColor.black
                 )
@@ -176,37 +164,11 @@ class HelpScene: SKScene {
     }
     
     func showBombInfo() {
-        let text: [String] = [
-            "Collecting a bomb",
-            "will immediatly",
-            "clear every fly",
-            "and ant from the",
-            "scene."
-        ]
-        
-        var i = 0
-        var y: CGFloat = 0.0
-        
-        for line in text {
-            y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(
-                self.helpers.createLabel(
-                    text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: 200, y: y),
-                    name: "help_text",
-                    color: SKColor.black
-                )
-            )
-            i+=1
-        }
-        
         let node = SKSpriteNode(imageNamed:"bomb_red")
-        node.position = CGPoint(x: 200, y: y-30)
+        node.position = CGPoint(x: 225, y: 427)
         node.name = "help_text"
         node.zPosition = 99
         
-        // blink so user notices it
         let blink1 = SKTexture(imageNamed: "bomb_red")
         let blink2 = SKTexture(imageNamed: "bomb_red_dark")
         let moves = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
@@ -214,38 +176,24 @@ class HelpScene: SKScene {
         node.run(SKAction.repeatForever(moves), withKey:"move")
         
         self.addChild(node)
+        
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Collecting a bomb will immediatly clear every fly and ant from the scene."),
+                fontSize: 14,
+                position: CGPoint(x: 500, y: 420),
+                name: "help_text",
+                color: SKColor.black
+            )
+        )
     }
     
     func showBlueRocksInfo() {
-        let text: [String] = [
-            "Blue rocks are thrown",
-            "in groups of five and",
-            "in consecutive order."
-        ]
-        
-        var i = 0
-        var y: CGFloat = 0.0
-        
-        for line in text {
-            y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(
-                self.helpers.createLabel(
-                    text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: self.frame.midX, y: y),
-                    name: "help_text",
-                    color: SKColor.black
-                )
-            )
-            i+=1
-        }
-        
         let node = SKSpriteNode(imageNamed:"bluerocks")
-        node.position = CGPoint(x: self.frame.midX, y: y-30)
+        node.position = CGPoint(x: 270, y: 375)
         node.name = "help_text"
         node.zPosition = 99
         
-        // blink so user notices it
         let blink1 = SKTexture(imageNamed: "bluerocks")
         let blink2 = SKTexture(imageNamed: "rocks")
         let moves = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
@@ -253,38 +201,24 @@ class HelpScene: SKScene {
         node.run(SKAction.repeatForever(moves), withKey:"move")
         
         self.addChild(node)
+        
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Blue rocks are thrown in groups of five and in consecutive order."),
+                fontSize: 14,
+                position: CGPoint(x: 525, y: 375),
+                name: "help_text",
+                color: SKColor.black
+            )
+        )
     }
     
     func showRedRocksInfo() {
-        let text: [String] = [
-            "Red rocks are thrown",
-            "in groups of five and",
-            "in a spray pattern."
-        ]
-        
-        var i = 0
-        var y: CGFloat = 0.0
-        
-        for line in text {
-            y = CGFloat((Int(self.frame.height-200))-(i*30))
-            self.addChild(
-                self.helpers.createLabel(
-                    text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: self.frame.width-200, y: y),
-                    name: "help_text",
-                    color: SKColor.black
-                )
-            )
-            i+=1
-        }
-        
         let node = SKSpriteNode(imageNamed:"redrocks")
-        node.position = CGPoint(x: self.frame.width-200, y: y-30)
+        node.position = CGPoint(x: 280, y: 330)
         node.name = "help_text"
         node.zPosition = 99
         
-        // blink so user notices it
         let blink1 = SKTexture(imageNamed: "redrocks")
         let blink2 = SKTexture(imageNamed: "rocks")
         let moves = SKAction.animate(with: [blink1, blink2], timePerFrame: 0.4)
@@ -292,6 +226,16 @@ class HelpScene: SKScene {
         node.run(SKAction.repeatForever(moves), withKey:"move")
         
         self.addChild(node)
+        
+        self.addChild(
+            self.helpers.createLabel(
+                text: String(format: "Red rocks are thrown in groups of five and in a spray pattern."),
+                fontSize: 14,
+                position: CGPoint(x: 535, y: 330),
+                name: "help_text",
+                color: SKColor.black
+            )
+        )
     }
     
     func showBlackAntInfo() {
@@ -313,8 +257,8 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: 200, y: y),
+                    fontSize: 14,
+                    position: CGPoint(x: 300, y: y),
                     name: "help_text",
                     color: SKColor.black
                 )
@@ -323,7 +267,7 @@ class HelpScene: SKScene {
         }
         
         let node = SKSpriteNode(imageNamed:"ant_stand_black")
-        node.position = CGPoint(x: 200, y: y-50)
+        node.position = CGPoint(x: 300, y: y-50)
         node.name = "help_text"
         node.zPosition = 99
         
@@ -350,7 +294,7 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
+                    fontSize: 14,
                     position: CGPoint(x: self.frame.midX, y: y),
                     name: "help_text",
                     color: SKColor.black
@@ -386,8 +330,8 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: self.frame.width-200, y: y),
+                    fontSize: 14,
+                    position: CGPoint(x: self.frame.width-300, y: y),
                     name: "help_text",
                     color: SKColor.black
                 )
@@ -396,7 +340,7 @@ class HelpScene: SKScene {
         }
         
         let node = SKSpriteNode(imageNamed:"fly_1")
-        node.position = CGPoint(x: self.frame.width-200, y: y-50)
+        node.position = CGPoint(x: self.frame.width-300, y: y-50)
         node.name = "help_text"
         node.zPosition = 99
         
@@ -411,8 +355,8 @@ class HelpScene: SKScene {
         self.addChild(
             self.helpers.createLabel(
                 text: "Note: When throwing blue and red rocks you are not restricted by the half second rule.",
-                fontSize: 16,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY-150),
+                fontSize: 14,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY-125),
                 name: "help_text",
                 color: SKColor.black
             )
@@ -421,8 +365,8 @@ class HelpScene: SKScene {
         self.addChild(
             self.helpers.createLabel(
                 text: "Also note that if you have both red and blue rocks, red rocks are thrown first.",
-                fontSize: 16,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY-175),
+                fontSize: 14,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY-150),
                 name: "help_text",
                 color: SKColor.black
             )
@@ -448,7 +392,7 @@ class HelpScene: SKScene {
             "http://graphicburger.com which provides royalty free art.",
             "",
             "All other work was created and is owned by Andrew Schools.",
-            "Copyright 2015, Andrew Schools."
+            "Copyright 2021, Andrew Schools."
         ]
         
         var i = 0
@@ -457,8 +401,8 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-150))-(i*30))),
+                    fontSize: 14,
+                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-200))-(i*30))),
                     name: "help_text",
                     color: SKColor.black
                 )
@@ -472,8 +416,8 @@ class HelpScene: SKScene {
          self.addChild(
             self.helpers.createLabel(
                 text: "Easy Mode",
-                fontSize: 36,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                fontSize: 18,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+150),
                 name: "help_text"
             )
         )
@@ -492,7 +436,7 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
+                    fontSize: 14,
                     position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
                     name: "help_text",
                     color: SKColor.black
@@ -506,8 +450,8 @@ class HelpScene: SKScene {
         self.addChild(
             self.helpers.createLabel(
                 text: "Hard Mode",
-                fontSize: 36,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                fontSize: 18,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+150),
                 name: "help_text"
             )
         )
@@ -527,7 +471,7 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
+                    fontSize: 14,
                     position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
                     name: "help_text",
                     color: SKColor.black
@@ -541,8 +485,8 @@ class HelpScene: SKScene {
         self.addChild(
             self.helpers.createLabel(
                 text: "Krazy Mode",
-                fontSize: 36,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
+                fontSize: 18,
+                position: CGPoint(x: self.frame.midX, y: self.frame.midY+150),
                 name: "help_text"
             )
         )
@@ -562,59 +506,13 @@ class HelpScene: SKScene {
             self.addChild(
                 self.helpers.createLabel(
                     text: String(format: line),
-                    fontSize: 24,
+                    fontSize: 14,
                     position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
                     name: "help_text",
                     color: SKColor.black
                 )
             )
             i+=1
-        }
-    }
-    
-    func showLittleSpaceExplorerAdInfo() {
-        self.addChild(
-            self.helpers.createLabel(
-                text: "Other Games",
-                fontSize: 36,
-                position: CGPoint(x: self.frame.midX, y: self.frame.midY+200),
-                name: "help_text"
-            )
-        )
-        
-        let text: [String] = [
-            "Check out my other game Little Space Explorer.",
-            "Like Krazy Koala, it's free and addictive!",
-            "Click image below to download from the App Store."
-        ]
-        
-        var i = 0
-        for line in text {
-            self.addChild(
-                self.helpers.createLabel(
-                    text: String(format: line),
-                    fontSize: 24,
-                    position: CGPoint(x: self.frame.midX, y: CGFloat((Int(self.frame.height-250))-(i*30))),
-                    name: "help_text",
-                    color: SKColor.black
-                )
-            )
-            i+=1
-        }
-        
-        let node = SKSpriteNode(imageNamed:"LittleSpaceExplorer640x640.jpg")
-        node.position = CGPoint(x: self.frame.midX, y: self.frame.midY-50)
-        node.name = "LittleSpaceExplorer"
-        node.zPosition = 100
-        node.xScale = 0.6
-        node.yScale = 0.6
-        
-        self.addChild(node)
-    }
-    
-    func openAppStore() {
-        if let url = URL(string: "https://itunes.apple.com/us/app/little-space-explorer/id961399066?mt=8") {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -657,9 +555,17 @@ class HelpScene: SKScene {
                 }
                 else if self.helpFilePos == 3 {
                     self.removeHelpFileNodes()
-                    self.showLittleSpaceExplorerAdInfo()
+                    self.showEasyDifficultyInfo()
                 }
                 else if self.helpFilePos == 4 {
+                    self.removeHelpFileNodes()
+                    self.showHardDifficultyInfo()
+                }
+                else if self.helpFilePos == 5 {
+                    self.removeHelpFileNodes()
+                    self.showKrazyDifficultyInfo()
+                }
+                else if self.helpFilePos == 6 {
                     self.removeHelpFileNodes()
                     self.showThirdHelpFile()
                 }
@@ -668,11 +574,6 @@ class HelpScene: SKScene {
                     let startScene = StartScene(size: self.size, gameViewController: self.controller)
                     startScene.scaleMode = .aspectFill
                     self.view?.presentScene(startScene)
-                }
-            }
-            else {
-                if nodeName == "LittleSpaceExplorer" {
-                    self.openAppStore()
                 }
             }
         }

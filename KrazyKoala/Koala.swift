@@ -1,25 +1,7 @@
 /*
-The MIT License (MIT)
 
-Copyright (c) 2016 Andrew Schools
+Copyright (c) 2021 Andrew Schools
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 */
 
 import SpriteKit
@@ -27,13 +9,16 @@ import Foundation
 import AVFoundation
 import AudioToolbox
 
-class Koala : Entity {
+class Koala : Entity, IEntity {    
     var lives = 5
     var canThrow = true
     var numRedRocks = 0
     var numBlueRocks = 0
+    var numFireballs = 0
     var lastTimeThrown = Date()
     var koalaAnimationWalkingSpeed = 0.2
+    var shield: SKSpriteNode?
+    var hasShield = false
     
     var gameScene: GameScene
     var difficulty: String
@@ -72,7 +57,7 @@ class Koala : Entity {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    func update(currentTime: CFTimeInterval) {
         let now = NSDate()
         
         // they can only throw every half seconds
@@ -80,6 +65,62 @@ class Koala : Entity {
         
         if interval > 0.5 {
             self.canThrow = true
+        }
+    }
+    
+    func contact(scene: GameScene, other: SKNode) {
+        switch other.name {
+            case "bluerock" :
+                scene.run(scene.energizeWav)
+                self.numBlueRocks = self.numBlueRocks + 3
+                scene.updateBlueRockIndicator(total: self.numBlueRocks)
+            case "redrock" :
+                scene.run(scene.energizeWav)
+                self.numRedRocks = self.numRedRocks + 3
+                scene.updateRedRockIndicator(total: self.numRedRocks)
+            case "fireball-package" :
+                scene.run(scene.energizeWav)
+                self.numFireballs = self.numFireballs + 3
+                scene.updateFireballIndicator(total: self.numFireballs)
+            case "bomb":
+                scene.run(scene.energizeWav)
+                scene.killAllBadGuys()
+            case "ground":
+                self.walk()
+            case "fly":
+                self.takeHit()
+                scene.addLifeBar(numLives: self.lives)
+            case "ant":
+                if (self.physicsBody?.velocity.dy)! < CGFloat(0.0) {
+                    self.applyBounce() // jumped on top of ant so koala will bounce
+                    //self.applyBlackAntStompAchievement()
+                }
+                else {
+                    self.takeHit()
+                    self.gameScene.addLifeBar(numLives: self.lives)
+                }
+            default:
+                print("here")
+            }
+    }
+    
+    func addShield() {
+        self.hasShield = true
+        
+        let shield = SKSpriteNode(imageNamed:"shield")
+        shield.xScale = 0.1
+        shield.yScale = 0.1
+        shield.zPosition = 102
+        shield.name = "shield"
+        self.addChild(shield)
+        
+        self.shield = shield
+    }
+    
+    func removeShield() {
+        self.hasShield = false
+        if let shield = self.shield {
+            self.removeChildren(in: [shield])
         }
     }
     
@@ -92,7 +133,7 @@ class Koala : Entity {
         self.run(SKAction.repeatForever(walkAni), withKey:"walk")
     }
     
-    func die() {
+    func kill() {
         self.removeAction(forKey: "walk")
         self.removeAction(forKey: "jump")
         
@@ -122,7 +163,7 @@ class Koala : Entity {
         self.run(self.jumpWav, withKey:"jump")
         
         // apply jump
-        self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 250))
+        self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 200))
     }
     
     func takeHit() {
@@ -192,6 +233,12 @@ class Koala : Entity {
             self.gameScene.updateBlueRockIndicator(total: self.numBlueRocks)
             self.lastTimeThrown = Date()
         }
+        else if self.numFireballs > 0 {
+            self.throwFireball()
+            self.numFireballs-=1
+            self.gameScene.updateFireballIndicator(total: self.numFireballs)
+            self.lastTimeThrown = Date()
+        }
         else {
             if self.canThrow == true {
                 self.throwPlainRock()
@@ -204,6 +251,16 @@ class Koala : Entity {
     private func throwPlainRock() {
         self.gameScene.addChild(
             Rock(
+                pointStart: self.position,
+                pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
+                gameScene: self.gameScene
+            )
+        )
+    }
+    
+    private func throwFireball() {
+        self.gameScene.addChild(
+            Fireball(
                 pointStart: self.position,
                 pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
                 gameScene: self.gameScene
