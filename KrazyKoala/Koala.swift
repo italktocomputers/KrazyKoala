@@ -19,6 +19,8 @@ class Koala : Entity, IEntity {
     var koalaAnimationWalkingSpeed = 0.2
     var shield: SKSpriteNode?
     var hasShield = false
+    var shieldLife = 0.0
+    var shieldAdded = Date()
     
     var gameScene: GameScene
     var difficulty: String
@@ -66,15 +68,21 @@ class Koala : Entity, IEntity {
         if interval > 0.5 {
             self.canThrow = true
         }
+        
+        let intervalShield = Double(now.timeIntervalSince(self.shieldAdded))
+        
+        if intervalShield >= self.shieldLife {
+            self.removeShield()
+        }
     }
     
     func contact(scene: GameScene, other: SKNode) {
         switch other.name {
-            case "bluerock" :
+            case "bluerock-package" :
                 scene.run(scene.energizeWav)
                 self.numBlueRocks = self.numBlueRocks + 3
                 scene.updateBlueRockIndicator(total: self.numBlueRocks)
-            case "redrock" :
+            case "redrock-package" :
                 scene.run(scene.energizeWav)
                 self.numRedRocks = self.numRedRocks + 3
                 scene.updateRedRockIndicator(total: self.numRedRocks)
@@ -82,21 +90,29 @@ class Koala : Entity, IEntity {
                 scene.run(scene.energizeWav)
                 self.numFireballs = self.numFireballs + 3
                 scene.updateFireballIndicator(total: self.numFireballs)
-            case "bomb":
+            case "bomb-package":
                 scene.run(scene.energizeWav)
                 scene.killAllBadGuys()
             case "ground":
                 self.walk()
             case "fly":
-                self.takeHit()
+                if (!hasShield) {
+                    self.takeHit()
+                }
                 scene.addLifeBar(numLives: self.lives)
             case "ant":
                 if (self.physicsBody?.velocity.dy)! < CGFloat(0.0) {
                     self.applyBounce() // jumped on top of ant so koala will bounce
+                    let ant = other as! Ant
+                    if ant.antType == 0 {
+                        self.addShield()
+                    }
                     //self.applyBlackAntStompAchievement()
                 }
                 else {
-                    self.takeHit()
+                    if (!hasShield) {
+                        self.takeHit()
+                    }
                     self.gameScene.addLifeBar(numLives: self.lives)
                 }
             default:
@@ -105,16 +121,19 @@ class Koala : Entity, IEntity {
     }
     
     func addShield() {
-        self.hasShield = true
+        if !self.hasShield {
+            let shield = SKSpriteNode(imageNamed:"shield")
+            shield.xScale = 0.1
+            shield.yScale = 0.1
+            shield.zPosition = 102
+            shield.name = "shield"
+            self.addChild(shield)
+            self.shield = shield
+            self.shieldAdded = Date()
+            self.hasShield = true
+        }
         
-        let shield = SKSpriteNode(imageNamed:"shield")
-        shield.xScale = 0.1
-        shield.yScale = 0.1
-        shield.zPosition = 102
-        shield.name = "shield"
-        self.addChild(shield)
-        
-        self.shield = shield
+        self.shieldLife = self.shieldLife + 5.0
     }
     
     func removeShield() {
@@ -122,6 +141,7 @@ class Koala : Entity, IEntity {
         if let shield = self.shield {
             self.removeChildren(in: [shield])
         }
+        self.shieldLife = 0.0
     }
     
     func walk() {
@@ -284,12 +304,14 @@ class Koala : Entity, IEntity {
     private func throwBlueRock() {
         // throw 5 rocks, one after another
         // blue rocks travel much faster than normal and red rocks
+        let group = Int.random(in: 1..<100)
         self.gameScene.addChild(
             BlueRock(
                 pointStart: self.position,
                 pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
                 speed: TimeInterval(0.1),
-                gameScene: self.gameScene
+                gameScene: self.gameScene,
+                group: group
             )
         )
         
@@ -297,7 +319,9 @@ class Koala : Entity, IEntity {
             BlueRock(
                 pointStart: self.position,
                 pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
-                speed: TimeInterval(0.2), gameScene: self.gameScene
+                speed: TimeInterval(0.2),
+                gameScene: self.gameScene,
+                group: group
             )
         )
         
@@ -306,7 +330,8 @@ class Koala : Entity, IEntity {
                 pointStart: self.position,
                 pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
                 speed: TimeInterval(0.3),
-                gameScene: self.gameScene
+                gameScene: self.gameScene,
+                group: group
             )
         )
         
@@ -315,7 +340,8 @@ class Koala : Entity, IEntity {
                 pointStart: self.position,
                 pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
                 speed: TimeInterval(0.4),
-                gameScene: self.gameScene
+                gameScene: self.gameScene,
+                group: group
             )
         )
         
@@ -324,7 +350,8 @@ class Koala : Entity, IEntity {
                 pointStart: self.position,
                 pointEnd: CGPoint(x: self.gameScene.xOfRight()+200, y: self.position.y),
                 speed: TimeInterval(0.5),
-                gameScene: self.gameScene
+                gameScene: self.gameScene,
+                group: group
             )
         )
     }

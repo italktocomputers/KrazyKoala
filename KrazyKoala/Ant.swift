@@ -12,6 +12,7 @@ class Ant: Entity, IEntity {
     var difficulty: String
     var gameCenter: GameCenterController
     var helpers: Helpers
+    var antType: Double
     
     init(gameScene: GameScene, difficulty: String) {
         self.gameScene = gameScene
@@ -25,6 +26,8 @@ class Ant: Entity, IEntity {
         if (antTypeInt == 1) {
             antTypeStr = "_black"
         }
+        
+        self.antType = antTypeInt
         
         let texture = SKTexture(imageNamed:"ant_walk_1"+antTypeStr)
         super.init(texture: texture, color: UIColor.clear, size: texture.size())
@@ -121,7 +124,9 @@ class Ant: Entity, IEntity {
     
     func contact(scene: GameScene, other: SKNode) {
         switch other.name {
-            case "rock", "bluerock", "redrock", "koala", "fireball" :
+            case "koala":
+                self.kill()
+            case "rock", "bluerock", "redrock", "fireball" :
                 self.kill()
             default:
                 print("here")

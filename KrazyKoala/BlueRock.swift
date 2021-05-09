@@ -9,9 +9,12 @@ import Foundation
 
 class BlueRock : Entity, IEntity {
     var gameScene: GameScene
+    var group: Int
+    var kills = 0
     
-    init(pointStart: CGPoint, pointEnd: CGPoint, speed: TimeInterval, gameScene: GameScene) {
+    init(pointStart: CGPoint, pointEnd: CGPoint, speed: TimeInterval, gameScene: GameScene, group: Int) {
         self.gameScene = gameScene
+        self.group = group
         
         let texture = SKTexture(imageNamed: "bluerock")
         super.init(texture: texture, color: UIColor.clear, size: texture.size())
@@ -52,6 +55,30 @@ class BlueRock : Entity, IEntity {
     }
     
     func contact(scene: GameScene, other: SKNode) {
+        switch other.name {
+            case "fly", "ant" :
+                self.kills = self.kills + 1
+                let totalKills = BlueRock.getGroupKills(group: self.group, gameScene: self.gameScene)
+                if totalKills > 1 {
+                    self.gameScene.showTextBurst(text: "Mutliples!")
+                }
+            default:
+                print("here")
+            }
+    }
+    
+    static func getGroupKills(group: Int, gameScene: GameScene) -> Int {
+        var totalKills = 0
+        gameScene.enumerateChildNodes(
+            withName: "bluerock",
+            using: {(node: SKNode!, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                let bluerock = node as! BlueRock
+                if bluerock.group == group {
+                    totalKills = totalKills + bluerock.kills
+                }
+            }
+        )
         
+        return totalKills
     }
 }

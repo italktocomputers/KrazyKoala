@@ -30,7 +30,7 @@ class BombItem : Entity, IEntity {
         self.physicsBody?.categoryBitMask = itemCategory
         self.physicsBody?.contactTestBitMask = koalaCategory
         self.physicsBody?.collisionBitMask = 0
-        self.name = "bomb"
+        self.name = "bomb-package"
         self.zPosition = 100
         
         // blink so user notices it
