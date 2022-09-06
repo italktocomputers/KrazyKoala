@@ -44,7 +44,7 @@ class Ant: Entity, IEntity {
         self.zPosition = 3
         
         let deQueue = SKAction.run({()
-            let index = self.gameScene.nodeQueue.index(of: self)
+            let index = self.gameScene.nodeQueue.firstIndex(of: self)
             self.gameScene.nodeQueue.remove(at: index!)
         })
         
@@ -94,7 +94,7 @@ class Ant: Entity, IEntity {
         self.gameScene.addPoof(loc: self.position)
         self.removeFromParent()
         
-        let index = self.gameScene.nodeQueue.index(of: self)
+        let index = self.gameScene.nodeQueue.firstIndex(of: self)
         
         if index != nil {
             let result = self.gameScene.nodeQueue.remove(at: index!)

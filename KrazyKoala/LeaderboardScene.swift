@@ -30,29 +30,7 @@ class LeaderboardScene: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMove(to view: SKView) {
-        let leftSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
-        let rightSwipe = UISwipeGestureRecognizer(target: self, action: Selector("handleSwipes:"))
-        
-        leftSwipe.direction = .left
-        rightSwipe.direction = .right
-        
-        view.addGestureRecognizer(leftSwipe)
-        view.addGestureRecognizer(rightSwipe)
-        
-        /*
-        if self.controller!.iAdError == true {
-            if self.controller!.isLoadingiAd == false {
-                // There was an error loading iAd so let's try again
-                self.controller!.loadAds()
-            }
-        }
-        else {
-            // We already have loaded iAd so let's just show it
-            self.controller!.adBannerView?.isHidden = false
-        }
-        */
-        
+    override func didMove(to view: SKView) {        
         var background = SKSpriteNode()
         
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -234,7 +212,7 @@ class LeaderboardScene: SKScene {
                     self.addChild(labelRank)
                     
                     let labelPlayer = self.helpers.createLabel(
-                        text: item!.player!.alias!,
+                        text: item!.player.alias,
                         fontSize: 24,
                         position: CGPoint(x: 325, y: self.frame.height-CGFloat(i)),
                         name: "stats"

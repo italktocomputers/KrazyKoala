@@ -8,7 +8,7 @@ import UIKit
 import SpriteKit
 import iAd
 
-class GameViewController: UIViewController, ADBannerViewDelegate/*, FBLoginViewDelegate, FBWebDialogsDelegate*/ {
+class GameViewController: UIViewController/*, ADBannerViewDelegate, FBLoginViewDelegate, FBWebDialogsDelegate*/ {
     var currentSceneName: String = ""
     
     override func viewDidLoad() {

@@ -222,14 +222,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         NotificationCenter.default.addObserver(
             self,
-            selector: "fromApplicationDidBecomeActive",
+            selector: Selector(("fromApplicationDidBecomeActive")),
             name: NSNotification.Name(rawValue: "fromApplicationDidBecomeActive"),
             object: nil
         )
         
         NotificationCenter.default.addObserver(
             self,
-            selector: "fromApplicationWillResignActive",
+            selector: Selector(("fromApplicationWillResignActive")),
             name: NSNotification.Name(rawValue: "fromApplicationWillResignActive"),
             object: nil
         )
@@ -621,7 +621,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let images = SKAction.animate(with: [image1, image2, image3, image4, image5], timePerFrame: 0.2)
             
             let deQueue = SKAction.run({()
-                let index = self.poofQueue.index(of: node)
+                let index = self.poofQueue.firstIndex(of: node)
                 self.poofQueue.remove(at: index!)
             })
             

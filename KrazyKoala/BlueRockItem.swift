@@ -49,7 +49,7 @@ class BlueRockItem : Entity, IEntity {
         self.position = CGPoint(x: self.position.x - CGFloat(self.gameScene.foregroundSpeed), y: self.position.y)
         if self.position.x <= -200 {
             self.removeFromParent()
-            let index = self.gameScene.nodeQueue.index(of: self)
+            let index = self.gameScene.nodeQueue.firstIndex(of: self)
             self.gameScene.nodeQueue.remove(at: index!)
         }
     }

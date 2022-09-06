@@ -18,7 +18,7 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
     
     // Authenticate player for game center
     func authenticateLocalPlayer(controller: UIViewController, callback:@escaping ()->Void) {
-        let localPlayer: GKLocalPlayer = GKLocalPlayer.localPlayer()
+        let localPlayer: GKLocalPlayer = GKLocalPlayer.local
         
         if localPlayer.isAuthenticated == false {
             localPlayer.authenticateHandler = {(viewController : UIViewController?, error : Error?) -> Void in
@@ -69,8 +69,8 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
         let leaderboardRequest = GKLeaderboard() as GKLeaderboard?
         leaderboardRequest?.identifier = type + "_" + difficulty
         leaderboardRequest?.range = range
-        leaderboardRequest?.timeScope = GKLeaderboardTimeScope.allTime
-        leaderboardRequest?.playerScope = GKLeaderboardPlayerScope.global
+        leaderboardRequest?.timeScope = GKLeaderboard.TimeScope.allTime
+        leaderboardRequest?.playerScope = GKLeaderboard.PlayerScope.global
         
         if leaderboardRequest != nil {
             leaderboardRequest?.loadScores(completionHandler: { (scores:[GKScore]?, error:Error?) -> Void in
@@ -92,7 +92,7 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
     
     func saveScore(type: String, score: Int, difficulty: String) {
         // If player is logged in to GC, then report the score
-        if GKLocalPlayer.localPlayer().isAuthenticated {
+        if GKLocalPlayer.local.isAuthenticated {
             let gkScore = GKScore(leaderboardIdentifier: type + "_" + difficulty)
             gkScore.value = Int64(score)
             GKScore.report(
@@ -110,10 +110,10 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
     }
     
     func getAchievements(callback: @escaping ([AnyObject])->Void) {
-        if GKLocalPlayer.localPlayer().isAuthenticated {
+        if GKLocalPlayer.local.isAuthenticated {
             GKAchievementDescription.loadAchievementDescriptions(completionHandler: {(achievements, error) -> Void in
                 if error != nil {
-                    print(error)
+                    print(error!)
                 }
                 
                 if achievements != nil {
@@ -128,7 +128,7 @@ class GameCenterController: NSObject, GKGameCenterControllerDelegate {
         achievement.percentComplete = percent
         GKAchievement.report([achievement], withCompletionHandler: {(error)->Void in
             if error != nil {
-                print(error)
+                print(error!)
             }
             else {
                 print("Achievement reported to Game Center: " + identifier)

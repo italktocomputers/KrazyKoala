@@ -42,7 +42,7 @@ class RedRock : Entity, IEntity {
         
         if self.position.x <= -200 {
             self.removeFromParent()
-            let index = self.gameScene.nodeQueue.index(of: self)
+            let index = self.gameScene.nodeQueue.firstIndex(of: self)
             self.gameScene.nodeQueue.remove(at: index!)
         }
     }

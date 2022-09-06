@@ -205,7 +205,7 @@ class Koala : Entity, IEntity {
         let images = SKAction.animate(with: [image1], timePerFrame: 0.2)
         
         let deQueue = SKAction.run({()
-            let index = self.gameScene.poofQueue.index(of: node)
+            let index = self.gameScene.poofQueue.firstIndex(of: node)
             if index != nil {
                 self.gameScene.poofQueue.remove(at: index!)
             }
